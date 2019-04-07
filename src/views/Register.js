@@ -43,8 +43,9 @@ class Register extends Component {
                 nombre: this.state.nombres,
                 apellidos: this.state.apellidos,
                 nacimiento: timesMilles,
-                tipo:this.state.selected
-
+                tipo:this.state.selected,
+                state:true,
+                numChat:0
             }
             await firebase.RegisterUserForFirstAccess(newUser).then(status =>{
                 alert("Usuario Registrado!")

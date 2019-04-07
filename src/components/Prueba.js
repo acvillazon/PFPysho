@@ -1,14 +1,45 @@
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import * as React from 'react';
+import { View, StyleSheet, Dimensions, StatusBar, Button } from 'react-native';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
-class Prueba extends Component {
+const FirstRoute = () => (
+    <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
+  
+);
+const SecondRoute = () => (
+  <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
+);
+
+export default class TabViewExample extends React.Component {
+  state = {
+    index: 0,
+    routes: [
+      { key: 'first', title: 'First' },
+      { key: 'second', title: 'Second' },
+    ],
+  };
+
   render() {
     return (
-      <View>
-        <Text> Esto es una Prueba </Text>
-      </View>
-    )
+      <TabView
+        navigationState={this.state}
+        renderScene={SceneMap({
+          first: FirstRoute,
+          second: SecondRoute,
+        })}
+        onIndexChange={index => this.setState({ index })}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        style={styles.container}
+      />
+    );
   }
 }
 
-export default Prueba
+const styles = StyleSheet.create({
+  container: {
+    marginTop: StatusBar.currentHeight
+  },
+  scene: {
+    flex: 1,
+  },
+});

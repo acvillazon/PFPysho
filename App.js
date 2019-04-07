@@ -1,18 +1,24 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Platform} from 'react-native';
+import { View, Text, SafeAreaView, Platform } from 'react-native';
 import { Font } from 'expo';
 import AppContainer from './src/components/Stack'
 import { Provider, connect } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import combineReducer from './reducer/CombineReducer' 
+import thunk from 'redux-thunk';
+
+
+const store = createStore(combineReducer)
 
 let platform = Platform.OS;
 let platformSpecificStyle = {}
-platformSpecificStyle = platform === 'ios' ? {marginTop:20}:{marginTop:24}
+platformSpecificStyle = platform === 'ios' ? { marginTop: 20 } : { marginTop: 24 }
 
 export default class App extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
-      loading:true
+    this.state = {
+      loading: true
     }
   }
 
@@ -26,23 +32,24 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (!this.state.loading) {
-      return (
-        <SafeAreaView style={[{ flex: 1 }]}>
-          <View style={[Border("red"), { flex: 1 }, platformSpecificStyle]}>
-            <AppContainer />
-          </View>
-        </SafeAreaView>
-      );
+    return (
+      <Provider store={store}>
+        {!this.state.loading 
+        ?
 
-    }else{
-      return(
-        <View>
-          <Text>...</Text>
-        </View>
-      )
+          <SafeAreaView style={[{ flex: 1 }]}>
+            <View style={[Border("red"), { flex: 1 }, platformSpecificStyle]}>
+              <AppContainer />
+            </View>
+          </SafeAreaView> 
+        :
+
+          <View>
+            <Text>...</Text>
+          </View>}
+      </Provider>
+    )
     }
-  }
 }
 
 Border = (color) => {

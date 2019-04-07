@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import firebaseApp from '../config/firebase'
 import { StyleSheet, View } from 'react-native'
+import { connect } from 'react-redux'
+import {addAuth} from '../../accion/User'
 
 import {
     Text,
@@ -10,12 +12,12 @@ import {
     Item
 } from 'native-base'
 
-export class Login extends Component {
+class Login extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            email: 'andres@hotmail.com',
+            email: 'adriana@gmail.com',
             password: '123456',
         }
     }
@@ -39,10 +41,14 @@ export class Login extends Component {
             })
 
         if (ExistinDatabase) {
-            this.props.navigation.navigate('chat',
-                {
-                    name: this.state.email
-                })
+            var user = await firebaseApp.getAuth()
+            await this.props.saveAuth(user)
+            await firebaseApp.LogInUsuario(firebaseApp.uid)
+            //console.log(this.props.credentials.Auth.usuario.tipo)
+            this.props.navigation.navigate('activos',
+            {
+                name: this.state.email
+            })
         } else {
             this.props.navigation.navigate('register')
         }
@@ -57,7 +63,7 @@ export class Login extends Component {
 
     render() {
         return (
-            <View style={[styles.container,{backgroundColor:"#757575"}]}>
+            <View style={[styles.container, { backgroundColor: "#757575" }]}>
                 <Item floatingLabel last style={styles.login}>
                     <Label>Username</Label>
                     <Input
@@ -97,4 +103,18 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Login
+const mapStateToProps = state => {
+    return {
+        credentials: state.credentials,
+    }
+}
+
+
+const mapDispatchToProps = dispatch => {
+    return {
+        saveAuth: (user) => dispatch(addAuth(user))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
