@@ -2,7 +2,6 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 
 class FirebaseDb {
-
     constructor() {
         ///INICIAR FIREBASE
         if (!firebase.apps.length) {
@@ -91,11 +90,14 @@ class FirebaseDb {
     }
 
     RegisterTokenInUsers = (token) => {
-        firebase.database().ref('Usuarios').child(this.uid).update({
-            ExpoPushToken: token
+        this.firestore.collection("Usuario").doc(this.uid).update({
+          ExpoPushToken: token
         })
+        /*firebase.database().ref('Usuarios').child(this.uid).update({
+            ExpoPushToken: token 
+        })*/
     }
-
+ 
     refOn = callback => {
         this.ref
         .limitToLast(20)
@@ -122,19 +124,18 @@ class FirebaseDb {
         return message;
     }; 
     
-    send = (messages,id) => {
+    send = (messages,id,thischat) => {
         var data = {}
         for (let i = 0; i < messages.length; i++) {
             const { text, user } = messages[i];
             const message = { text, user, createdAt: firebase.firestore.FieldValue.serverTimestamp()};
-            this.ref.push(message);
             this.firestore.collection("Chat").doc(id).collection("Message").add({
                 message
             })
             //ENVIAR PUSH NOTIFICATION
             data={
-                "to": "ExponentPushToken[TwJErCJN8wFujCWCHdf211]",
-                "body": "New Message!!"
+                "to": thischat.partner.ExpoPushToken,
+                "body": text
             }
             
             fetch("https://exp.host/--/api/v2/push/send",
@@ -186,7 +187,7 @@ class FirebaseDb {
                 chatnum = (data.data().usuario.numChat)+1
 
             })
-            var psy = this.firestore.collection("Usuario").doc(pycho.id).update({
+            this.firestore.collection("Usuario").doc(pycho.id).update({
                 'usuario.numChat': chatnum
             })
 
@@ -210,47 +211,6 @@ class FirebaseDb {
         //Aumentar el contador al psycologo
     }
 
-
-
-
-
-    getChatOn = async (id,callback) =>{
-        var chats=undefined
-        var infoChats=[]
-        var ids=[]
-
-        if(id=="1"){
-            var chat = await this.firestore.collection("Chat").where("usuario.idP","==",this.uid).onSnapshot(doc =>{
-                console.log(doc.size)
-            })
-        }else{
-            var chat = await this.firestore.collection("Chat").where("usuario.idC","==",this.uid).onSnapshot(doc =>{
-                console.log(doc.size)
-            })
-        }
-
-        if(chat.size>0){
-            console.log("AQIIOPIOI")
-            doc.forEach(snap =>{
-                infoChats.push({
-                    id:snap.id,
-                    body:snap.data()
-                })
-                ids.push(snap.id)
-            })
-            var res = [ids,infoChats]
-            callback(res)
-        }
-    }
-
-    getChatOne = async(id) =>{
-        var cita=undefined
-        var chat = await this.firestore.collection("Chat").doc(id).get().then(snapshot =>{
-            cita=snapshot.data()
-        })
-        return cita
-    }
-
     getChat = async (tipo) =>{
         var chats=undefined
         var infoChats=[]
@@ -263,31 +223,30 @@ class FirebaseDb {
             chats = await this.firestore.collection("Chat").where("usuario.idC","==",this.uid)
         }
 
-        var result = await chats.get().then(snapshot =>{
-            snapshot.forEach(snap =>{
-                infoChats.push({
-                    id:snap.id,
-                    body:snap.data()
+        var result = await chats.onSnapshot(doc =>{
+            if(doc.size>0){
+                var changes = doc.docChanges()
+                changes.forEach( async change =>{
+                    if(change.type=="added"){
+                        var snapshot = change.doc
+
+                        var estudent = tipo == "1" 
+                        ?   await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idC).get()
+                        :   await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idP).get()
+        
+                        infoChats.push({
+                            id:snapshot.id,
+                            body:snapshot.data(),
+                            partner:estudent.data()
+                        })
+                        ids.push(snapshot.id)
+                    }
                 })
-                ids.push(snap.id)
-            })
+            }
         })
         var res = [ids,infoChats]
         //console.log(res)
         return res
-    }
-
-    getMessages = async (id) =>{
-        await this.firestore.collection("Chat").doc(id).collection("Message").get().then(snapshot =>{
-            console.log("Prueba->>"+snapshot.size)
-        })
-    }
-
-    ///NO FINISH
-    sendMessage = async (messages, success_callback, failed_callback) => {
-        await firebase.firestore().collection("Chat").add({
-
-        }).then(success_callback, failed_callback)
     }
 }
 

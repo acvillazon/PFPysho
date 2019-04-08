@@ -3,6 +3,7 @@ import firebaseApp from '../config/firebase'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import {addAuth} from '../../accion/User'
+import { Notifications, Permissions } from 'expo'
 
 import {
     Text,
@@ -20,6 +21,27 @@ class Login extends Component {
             email: 'adriana@gmail.com',
             password: '123456',
         }
+    }
+
+    registerForNotification = async () => {
+        //Mirar si tengo permisos para notificaciones
+        const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        let finalStatus = status;
+    
+        //Sino tengo permisos, pedirlos.
+        if (finalStatus !== 'granted') {
+          const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+          finalStatus = status;
+    
+          if (finalStatus !== 'granted') {
+            return;
+          }
+        }
+        alert("Si permisos")
+        //Obtener el Token para notificaciones.
+        let token = await Notifications.getExpoPushTokenAsync();
+        alert(token)
+        firebaseApp.RegisterTokenInUsers(token)
     }
 
     onPressLogin = async () => {
@@ -44,7 +66,7 @@ class Login extends Component {
             var user = await firebaseApp.getAuth()
             await this.props.saveAuth(user)
             await firebaseApp.LogInUsuario(firebaseApp.uid)
-            //console.log(this.props.credentials.Auth.usuario.tipo)
+            this.registerForNotification();
             this.props.navigation.navigate('activos',
             {
                 name: this.state.email
@@ -53,7 +75,7 @@ class Login extends Component {
             this.props.navigation.navigate('register')
         }
 
-    };
+    }; 
     loginFailed = () => {
         alert('Login failure. Please tried again.');
     };

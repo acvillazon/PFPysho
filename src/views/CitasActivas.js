@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, FlatList, TouchableHighlight, BackHandler } from 'react-native';
+import { View, FlatList, TouchableHighlight} from 'react-native';
 import { Text, Label } from 'native-base'
-import AppContainer from '../components/Stack'
 import { Dialog } from 'react-native-simple-dialogs'
 import { LoadCategory } from '../../accion/CategoryAction'
 import firebase from '../config/firebase'
@@ -18,26 +17,17 @@ class Citas_Activas extends Component {
       categoriesp: undefined,
       dialogWaiting: false,
       chats: [],
-      users: [],
       chatReady: false
     };
   }
 
   async componentDidMount() {
     var chats = await firebase.getChat(this.props.credentials.Auth.usuario.tipo);
-    this.setState({ chats: chats[0] })
     await this.props.SaveChats(chats[1])
-    var users = []
-    for (var i = 0; i < chats[0].length; i++) {
-      var hash = this.props.chats.chat[i].body.usuario.idC == firebase.uid
-        ? this.props.chats.chat[i].body.usuario.idP
-        : this.props.chats.chat[i].body.usuario.idC
-      var res = await firebase.getUser(hash)
-      users.push(res.usuario.nombres)
-    }
-    this.setState({ users: users })
-    this.setState({ chatReady: true })
-    console.log(this.state.users)
+    this.setState({ chats: chats[0] })
+    setTimeout(() =>{
+      this.setState({ chatReady: true })
+    },1000)
   }
 
   async componentWillMount() {
@@ -48,46 +38,54 @@ class Citas_Activas extends Component {
       prepareCategory.push(value.nombre)
     })
     this.setState({ categoriesp: prepareCategory })
+
+  }
+  
+  componentWillUnmount() {
+    if (firebase.LogOutUsuario(firebase.uid)) {
+      alert("Se Ha cerrado sesión")
+    }
   }
 
   _CreateNewChat = async (item) => {
     var result = this.props.dataCategories.categories.filter((data) => {
       return data.nombre == item
     })
-    console.log(result[0])
     this.setState({ dialogWaiting: true })
     this.setState({ dialogVisible: false })
     var result = await firebase.CreateNewChat(result[0].nombre)
     if(result==false){
       alert("No hay psicologos disponibles, intente mas tarde")
     }else{
-      
       this.props.navigation.navigate("chat",
       {
         actual: result[1],
         id: result[0]
       })
-      this.setState({ chats: [] })
-      var chats = await firebase.getChat(this.props.credentials.Auth.usuario.tipo);
-      this.setState({ chats: chats[0] })
-      await this.props.SaveChats(chats[1])
-      var users = []
-      for (var i = 0; i < chats[0].length; i++) {
-        var hash = this.props.chats.chat[i].body.usuario.idC == firebase.uid
-          ? this.props.chats.chat[i].body.usuario.idP
-          : this.props.chats.chat[i].body.usuario.idC
-        var res = await firebase.getUser(hash)
-        users.push(res.usuario.nombres)
-      }
-      this.setState({ users: users })
     }
     this.setState({ dialogWaiting: false })
   }
 
-  componentWillUnmount() {
-    if (firebase.LogOutUsuario(firebase.uid)) {
-      alert("Se Ha cerrado sesión")
+
+  chatPress = async (id) => {
+    var result = this.props.chats.chat.filter(chat =>{ return chat.id == id })
+    
+    if(result.length>0){
+       this.props.navigation.navigate("chat", {actual:result[0] , id:id})
+
+    }else{
+      alert("No se pudo obtener la conversación")
     }
+  }
+  
+  renderItem = (item) => {
+    return (
+      <View style={[{ paddingLeft: 15 }, { paddingVertical: 5 }]}>
+        <TouchableHighlight style={{ paddingVertical: 5 }} underlayColor="rgba(89,165,89,0.3)" onPress={() => this._CreateNewChat(item.item)}>
+          <Text numberOfLines={5} style={[{ fontSize: 15 }, { color: '#616161' }]}>{item.item}</Text>
+        </TouchableHighlight>
+      </View>
+    )
   }
 
   renderItemChat = (item) => {
@@ -95,7 +93,7 @@ class Citas_Activas extends Component {
       return (
         <View style={{ flex: 1 }}>
           <TouchableHighlight onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
-            <Text style={[{ paddingVertical: 10 }, { paddingHorizontal: 4 }]}>{this.props.chats.chat[item.index].body.tipo}-{this.state.users[item.index]}</Text>
+            <Text style={[{ paddingVertical: 10 }, { paddingHorizontal: 4 }]}>{this.props.chats.chat[item.index].body.tipo}-{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
           </TouchableHighlight>
         </View>
       )
@@ -106,41 +104,10 @@ class Citas_Activas extends Component {
     }
   }
 
-  chatPress = async (id) => {
-    console.log("id.>" + id)
-    var cita = await firebase.getChatOne(id)
-    this.props.navigation.navigate("chat",
-      {
-        actual: cita,
-        id: id
-      })
-  }
-
-  renderItem = (item) => {
-    return (
-      <View style={[{ paddingLeft: 15 }, { paddingVertical: 5 }]}>
-        <TouchableHighlight style={{ paddingVertical: 5 }} underlayColor="rgba(89,165,89,0.3)" onPress={() => this._CreateNewChat(item.item)}>
-          <Text numberOfLines={5} style={[{ fontSize: 15 }, { color: '#616161' }]}>{item.item}</Text>
-        </TouchableHighlight>
-      </View>
-    )
-  }
-  _prepareCategory = data => {
-    var idC = data.id;
-    var body = data.nombre;
-    var categoria = {
-      idC: body
-    }
-    return categoria;
-  }
-
-  _onPress = () => {
-    this.setState({ dialogVisible: true })
-  }
-
   render() {
     return (
       <View style={{ flex: 1 }}>
+
         <Dialog
           visible={this.state.dialogVisible}
           title="Como te sientes?"
@@ -182,7 +149,7 @@ class Citas_Activas extends Component {
           <ActionButton
             style={{ flex: 1 }}
             buttonColor="rgba(89,165,89,1)"
-            onPress={this._onPress} />
+            onPress={() => this.setState({dialogVisible: true})} />
         }
       </View>
     );

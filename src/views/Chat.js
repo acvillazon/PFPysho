@@ -8,17 +8,17 @@ class Chat extends React.Component {
     super(props)
     this.state = {
       messages: [],
-      id:undefined
+      id:undefined,
+      thisChat:undefined
     }
   }
 
   componentDidMount() {
-    /*firebase.refOn(message =>
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, message),
-      })));*/
-    //this.registerForNotification();
    var citaid = this.props.navigation.getParam("id")
+   var a = this.props.navigation.getParam("actual")
+   console.log("CHATSSS")
+   console.log(a)
+   this.setState({thisChat:a})
     this.setState({id:citaid})
     firebase.refOnFirestore(citaid,message =>
       this.setState(previousState => ({
@@ -46,11 +46,11 @@ class Chat extends React.Component {
     }
     //Obtener el Token para notificaciones.
     let token = await Notifications.getExpoPushTokenAsync();
-    firebase.RegisterTokenInUsers(token)
+    //firebase.RegisterTokenInUsers(token)
   }
 
   onSend = message =>{
-    firebase.send(message,this.state.id)
+    firebase.send(message,this.state.id,this.state.thisChat)
   }
 
   render() {
