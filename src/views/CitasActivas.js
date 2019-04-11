@@ -22,12 +22,13 @@ class Citas_Activas extends Component {
   }
 
   async componentDidMount() {
-    var chats = await firebase.getChat(this.props.credentials.Auth.usuario.tipo);
-    await this.props.SaveChats(chats[1])
-    this.setState({ chats: chats[0] })
-    setTimeout(() =>{
-      this.setState({ chatReady: true })
-    },1000)
+    await firebase.getChat(this.props.credentials.Auth.usuario.tipo, async (chats) => {
+      await this.props.SaveChats(chats[1])
+      this.setState({ chats: chats[0] })
+      setTimeout(() =>{
+        this.setState({ chatReady: true })
+      },1000)
+    });
   }
 
   async componentWillMount() {
@@ -146,10 +147,12 @@ class Citas_Activas extends Component {
           ?
           null
           :
-          <ActionButton
-            style={{ flex: 1 }}
-            buttonColor="rgba(89,165,89,1)"
-            onPress={() => this.setState({dialogVisible: true})} />
+          <View style={{flex:1}}>
+            <ActionButton  
+              style={{ flex: 1 }}
+              buttonColor="rgba(89,165,89,1)"
+              onPress={() => this.setState({dialogVisible: true})} />
+          </View>
         }
       </View>
     );

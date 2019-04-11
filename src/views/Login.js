@@ -39,9 +39,7 @@ class Login extends Component {
         }
         alert("Si permisos")
         //Obtener el Token para notificaciones.
-        let token = await Notifications.getExpoPushTokenAsync();
-        alert(token)
-        firebaseApp.RegisterTokenInUsers(token)
+        let token = await Notifications.getExpoPushTokenAsync();        firebaseApp.RegisterTokenInUsers(token)
     }
 
     onPressLogin = async () => {
@@ -49,16 +47,17 @@ class Login extends Component {
             email: this.state.email,
             password: this.state.password,
         };
+        //Loguear con autenticacion de Firebase.
         firebaseApp.login(user, this.loginSuccess, this.loginFailed);
     };
 
     loginSuccess = async () => {
         var ExistinDatabase = true;
-        alert('Inicio de sesion exitoso');
+        console.log("Inicio de sesion exitoso")
 
         await firebaseApp.CheckNewUser()
             .then(exist => {
-                console.log(exist + "DedeLogin")
+                console.log("El usuario ya existe")
                 ExistinDatabase = exist
             })
 

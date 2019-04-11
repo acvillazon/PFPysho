@@ -211,7 +211,7 @@ class FirebaseDb {
         //Aumentar el contador al psycologo
     }
 
-    getChat = async (tipo) =>{
+    getChat = async (tipo, callback) =>{
         var chats=undefined
         var infoChats=[]
         var ids=[]
@@ -229,11 +229,18 @@ class FirebaseDb {
                 changes.forEach( async change =>{
                     if(change.type=="added"){
                         var snapshot = change.doc
+                        console.log("TIPO->"+tipo)
 
-                        var estudent = tipo == "1" 
-                        ?   await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idC).get()
-                        :   await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idP).get()
-        
+                        var estudent=undefined
+
+                        if(tipo=="1"){
+                            estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idC).get() 
+                            console.log(estudent.data())
+                        }else{
+                            estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idP).get()
+                            console.log(estudent.data())
+                        }
+
                         infoChats.push({
                             id:snapshot.id,
                             body:snapshot.data(),
@@ -242,11 +249,12 @@ class FirebaseDb {
                         ids.push(snapshot.id)
                     }
                 })
+                var res = [ids,infoChats]
+                console.log(res)
+                callback(res)
             }
         })
-        var res = [ids,infoChats]
-        //console.log(res)
-        return res
+        //return res
     }
 }
 
