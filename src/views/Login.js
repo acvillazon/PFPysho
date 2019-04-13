@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import firebaseApp from '../config/firebase'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Dimensions, ActivityIndicator} from 'react-native'
 import { connect } from 'react-redux'
 import {addAuth} from '../../accion/User'
 import { Notifications, Permissions } from 'expo'
@@ -18,7 +18,8 @@ class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            email: 'adriana@gmail.com',
+            loading:false,
+            email: 'andres@hotmail.com',
             password: '123456',
         }
     }
@@ -39,10 +40,12 @@ class Login extends Component {
         }
         alert("Si permisos")
         //Obtener el Token para notificaciones.
-        let token = await Notifications.getExpoPushTokenAsync();        firebaseApp.RegisterTokenInUsers(token)
+        let token = await Notifications.getExpoPushTokenAsync();        
+        firebaseApp.RegisterTokenInUsers(token)
     }
 
     onPressLogin = async () => {
+        this.setState({loading:true})
         const user = {
             email: this.state.email,
             password: this.state.password,
@@ -60,12 +63,14 @@ class Login extends Component {
                 console.log("El usuario ya existe")
                 ExistinDatabase = exist
             })
+        this.registerForNotification();
 
         if (ExistinDatabase) {
             var user = await firebaseApp.getAuth()
             await this.props.saveAuth(user)
             await firebaseApp.LogInUsuario(firebaseApp.uid)
-            this.registerForNotification();
+            this.setState({loading:false})
+
             this.props.navigation.navigate('activos',
             {
                 name: this.state.email
@@ -102,6 +107,13 @@ class Login extends Component {
                 <Button success block style={styles.btnlogin} onPress={() => this.onPressLogin()}>
                     <Text> Success </Text>
                 </Button>
+
+                {this.state.loading == true 
+                    ?   <View style={styles.indicator}>
+                            <ActivityIndicator style={styles.indicatorA} size="large" color="green" />
+                        </View>
+                    :   null
+                }
             </View>
         )
     }
@@ -121,6 +133,14 @@ const styles = StyleSheet.create({
     btnlogin: {
         marginHorizontal: 10,
         marginVertical: 10,
+    },
+    indicator:{
+        position: "absolute",
+        backgroundColor:"black",
+        opacity:0.7,
+        height:Dimensions.get("window").height,
+        width: Dimensions.get("window").width,
+        justifyContent:'center'
     }
 });
 

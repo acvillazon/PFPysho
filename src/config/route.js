@@ -10,7 +10,7 @@ export const route = {
     prueba:Prueba,
     chat:Chat,
     register:Register,
-    activos:ChatActivos
+    activos:ChatActivos,
 }
 
 export default route

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, TouchableHighlight} from 'react-native';
+import { View, FlatList, TouchableHighlight } from 'react-native';
 import { Text, Label } from 'native-base'
 import { Dialog } from 'react-native-simple-dialogs'
 import { LoadCategory } from '../../accion/CategoryAction'
@@ -23,11 +23,10 @@ class Citas_Activas extends Component {
 
   async componentDidMount() {
     await firebase.getChat(this.props.credentials.Auth.usuario.tipo, async (chats) => {
+      console.log("Nuevo Mensaje")
       await this.props.SaveChats(chats[1])
       this.setState({ chats: chats[0] })
-      setTimeout(() =>{
-        this.setState({ chatReady: true })
-      },1000)
+      setTimeout(() => {this.setState({ chatReady: true })}, 1000)
     });
   }
 
@@ -41,7 +40,7 @@ class Citas_Activas extends Component {
     this.setState({ categoriesp: prepareCategory })
 
   }
-  
+
   componentWillUnmount() {
     if (firebase.LogOutUsuario(firebase.uid)) {
       alert("Se Ha cerrado sesión")
@@ -54,31 +53,27 @@ class Citas_Activas extends Component {
     })
     this.setState({ dialogWaiting: true })
     this.setState({ dialogVisible: false })
-    var result = await firebase.CreateNewChat(result[0].nombre)
-    if(result==false){
+    var result2 = await firebase.CreateNewChat(result[0].nombre, this.props.credentials.Auth)
+    if (result2 == false) {
       alert("No hay psicologos disponibles, intente mas tarde")
-    }else{
-      this.props.navigation.navigate("chat",
-      {
-        actual: result[1],
-        id: result[0]
-      })
+    } else {
+      setTimeout(() => { this.chatPress(result2[0]) }, 600)
     }
     this.setState({ dialogWaiting: false })
   }
 
 
   chatPress = async (id) => {
-    var result = this.props.chats.chat.filter(chat =>{ return chat.id == id })
-    
-    if(result.length>0){
-       this.props.navigation.navigate("chat", {actual:result[0] , id:id})
+    var result = this.props.chats.chat.filter(chat => { return chat.id == id })
 
-    }else{
+    if (result.length > 0) {
+      this.props.navigation.navigate("chat", { actual: result[0], id: id })
+
+    } else {
       alert("No se pudo obtener la conversación")
     }
   }
-  
+
   renderItem = (item) => {
     return (
       <View style={[{ paddingLeft: 15 }, { paddingVertical: 5 }]}>
@@ -90,7 +85,7 @@ class Citas_Activas extends Component {
   }
 
   renderItemChat = (item) => {
-    try{
+    try {
       return (
         <View style={{ flex: 1 }}>
           <TouchableHighlight onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
@@ -98,7 +93,7 @@ class Citas_Activas extends Component {
           </TouchableHighlight>
         </View>
       )
-    }catch{
+    } catch{
       return (
         <Text>Cargando.....</Text>
       )
@@ -141,18 +136,15 @@ class Citas_Activas extends Component {
             renderItem={this.renderItemChat}
           />
 
-          : <Text>Cargandoooo......</Text>}
+          : <Text>No hay Chats Disponibles</Text>}
 
         {this.props.credentials.Auth.usuario.tipo == "3"
           ?
           null
           :
-          <View style={{flex:1}}>
-            <ActionButton  
-              style={{ flex: 1 }}
-              buttonColor="rgba(89,165,89,1)"
-              onPress={() => this.setState({dialogVisible: true})} />
-          </View>
+          <ActionButton
+            buttonColor="rgba(89,165,89,1)"
+            onPress={() => this.setState({ dialogVisible: true })} />
         }
       </View>
     );

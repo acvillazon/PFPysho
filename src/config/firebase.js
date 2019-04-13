@@ -22,7 +22,7 @@ class FirebaseDb {
         await this.firestore.collection("Usuario").doc(id).update({
             "usuario.state":false
         })
-        return false;
+        return true;
     }
 
     //VIEW {LOGIN}
@@ -152,6 +152,13 @@ class FirebaseDb {
         };
     }
 
+    SaveRegister = (id,text) =>{
+        this.firestore.collection("Chat").doc(id).collection("Registro").add({
+            date: firebase.firestore.FieldValue.serverTimestamp(),
+            text:text
+        })
+    }
+
     ////CREAR NUEVA CONVERSACION
     LoadCategories = async () =>{
         var categories=[]
@@ -169,7 +176,7 @@ class FirebaseDb {
         return categories
     }
 
-    CreateNewChat = async (tipo) =>{
+    CreateNewChat = async (tipo,user) =>{
         var id=undefined
         try{
             var result = await this.firestore.collection("Usuario")
@@ -187,29 +194,33 @@ class FirebaseDb {
                 chatnum = (data.data().usuario.numChat)+1
 
             })
+            
             this.firestore.collection("Usuario").doc(pycho.id).update({
                 'usuario.numChat': chatnum
             })
-
+            
+            if(user.usuario.tipo=="0"){
+                this.firestore.collection("Usuario").doc(this.uid).get().then((snapshot =>{
+                    this.firestore.collection("Usuario").doc(this.uid).update({
+                        'usuario.numChat': (snapshot.data().usuario.numChat+1)
+                    })
+                }))
+            }
             return pycho
         })
 
-        var chat = await this.firestore.collection("Chat").add({
+        await this.firestore.collection("Chat").add({
             date:firebase.firestore.FieldValue.serverTimestamp(),
             usuario:{
                 idC:this.uid,
                 idP:user.id
             },
             tipo:tipo
-        }).then(docRef =>{
-            id = docRef.id
-        })
+        }).then(docRef =>{ id = docRef.id })
         }catch(r){
             return false
         }
-        return [id,chat]
-        //Aumentar el contador al psycologo
-    }
+        return [id,undefined]    }
 
     getChat = async (tipo, callback) =>{
         var chats=undefined
@@ -224,6 +235,7 @@ class FirebaseDb {
         }
 
         var result = await chats.onSnapshot(doc =>{
+            console.log("ALGO CAMBIO")
             if(doc.size>0){
                 var changes = doc.docChanges()
                 changes.forEach( async change =>{
@@ -247,6 +259,9 @@ class FirebaseDb {
                             partner:estudent.data()
                         })
                         ids.push(snapshot.id)
+                    }
+                    else{
+                        console.log("Aqui algo cambio")
                     }
                 })
                 var res = [ids,infoChats]
