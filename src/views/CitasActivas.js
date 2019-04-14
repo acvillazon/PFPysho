@@ -89,17 +89,19 @@ class Citas_Activas extends Component {
     )
   }
 
-  _dialogVisible = () =>{
-    if(this.props.credentials.Auth.usuario.numChat<=40){
+  _dialogVisible = async () =>{
+    var user = await firebase.getUser(firebase.uid)
+    if(user.usuario.numChat<8){
       this.setState({ dialogVisible: true })
     }else{
       alert("ha excedido el numero de chats disponibles")
     }
   }
 
-  changeChatToInactive = (id) =>{
-    if(firebase.activeToInactive(id)){
+  changeChatToInactive = (chat) =>{
+    if(firebase.activeToInactive(chat.id)){
       alert("El chat ha sido cerrado y archivado")
+      firebase.disminuirNumChat(chat.body.usuario)
     }else{
       alert("El no ha podido ser archivado")
     }
@@ -119,7 +121,7 @@ class Citas_Activas extends Component {
               {flex:1},
               {justifyContent:"flex-end"},
               {paddingHorizontal:20}]} 
-              onPress={() => this.changeChatToInactive(this.props.chats.chat[item.index].id)}>
+              onPress={() => this.changeChatToInactive(this.props.chats.chat[item.index])}>
               
               <AntDesign name="close" size={20} ></AntDesign>
           </Button>

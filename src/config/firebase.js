@@ -177,11 +177,21 @@ class FirebaseDb {
         await this.firestore.collection("Chat").doc(id).update({
             state:"inactivo"
         }).then((value) =>{
-            inactive = true
+        })
+        return inactive
+    }
+
+    disminuirNumChat = async (usuarios) =>{
+        const user1 = await this.firestore.collection("Usuario").doc(usuarios.idC).get()
+        const user2 = await this.firestore.collection("Usuario").doc(usuarios.idP).get()
+
+        await this.firestore.collection("Usuario").doc(usuarios.idC).update({
+            "usuario.numChat":(user1.data().usuario.numChat)-1
         })
 
-        
-        return inactive
+        await this.firestore.collection("Usuario").doc(usuarios.idP).update({
+            "usuario.numChat":(user2.data().usuario.numChat)-1
+        })
     }
 
     CreateNewChat = async (tipo,user) =>{
@@ -231,8 +241,6 @@ class FirebaseDb {
         }catch(r){
             return false
         }
-        console.log("NewID")
-        alert(id)
         return [id,undefined]  
     }
 
@@ -256,7 +264,6 @@ class FirebaseDb {
                     var snapshot = change.doc
 
                     if(change.type=="added" && snapshot.data().state=="activo"){
-                        alert("add")
                         var estudent=undefined
 
                         if(tipo=="1"){
