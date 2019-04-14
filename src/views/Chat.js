@@ -1,15 +1,12 @@
 import React from 'react';
-import { Platform, View , StyleSheet} from 'react-native'
+import { Platform, View, StyleSheet } from 'react-native'
 import { GiftedChat } from 'react-native-gifted-chat';
 import { Notifications, Permissions } from 'expo'
 import { Feather } from 'react-native-vector-icons'
-import { Header,Text, Button, Left, Right, Body, Title,Textarea } from 'native-base';
+import { Header, Text, Button, Left, Right, Label, Body, Title, Textarea } from 'native-base';
 import firebase from '../config/firebase'
 import { Dialog } from 'react-native-simple-dialogs'
-
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
-let platform = Platform.OS;
 
 class Chat extends React.Component {
   constructor(props) {
@@ -19,14 +16,16 @@ class Chat extends React.Component {
       id: undefined,
       thisChat: undefined,
       registerVisible: false,
-      profileVisible:false,
-      textDialog:undefined
+      profileVisible: false,
+      textDialog: undefined
     }
   }
 
   async componentDidMount() {
     var citaid = this.props.navigation.getParam("id")
     var a = await this.props.navigation.getParam("actual")
+    console.log('ID')
+    console.log(citaid)
     this.setState({ thisChat: a })
     this.setState({ id: citaid })
     firebase.refOnFirestore(citaid, message =>
@@ -38,8 +37,8 @@ class Chat extends React.Component {
     firebase.refOff();
   }
 
-  changeText = (text) =>{
-    this.setState({textDialog:text})
+  changeText = (text) => {
+    this.setState({ textDialog: text })
   }
 
   registerForNotification = async () => {
@@ -61,29 +60,41 @@ class Chat extends React.Component {
     //firebase.RegisterTokenInUsers(token)
   }
 
-  showProfile = () =>{
-    /*this.props.navigation.navigate('profile',{
-      user:this.state.thisChat.partner
-    })*/
-    
+  showProfile = () => {
+    this.setState({ profileVisible: true })
   }
 
   onSend = message => {
-    firebase.send(message, this.state.id, this.state.thisChat)
+    if(this.props.navigation.getParam("state") == "activo"){
+      firebase.send(message, this.state.id, this.state.thisChat)
+    }else{
+      alert("Este chat a sido cerrado, no puede seguir enviando mensajes")
+    }
   }
 
-  pressSaveRegister = () =>{
-    firebase.SaveRegister(this.props.navigation.getParam("id"),this.state.textDialog)
-    this.setState({textDialog:undefined, registerVisible:false})
-    setTimeout(()=>{
+  pressSaveRegister = () => {
+    firebase.SaveRegister(this.props.navigation.getParam("id"), this.state.textDialog)
+    this.setState({ textDialog: undefined, registerVisible: false })
+    setTimeout(() => {
       alert("Registro guardado")
-    },400)
+    }, 400)
+  }
+
+  verRegistros = () => {
+    this.props.navigation.navigate("registro", {
+      id: this.state.id
+    })
   }
 
   render() {
     if (this.props.navigation.getParam("actual") != undefined) {
       var { partner } = this.props.navigation.getParam("actual")
       var nombre_user = partner.usuario.nombres
+      var apellidos_user = partner.usuario.apellidos
+      var nacimiento_user = new Date()
+      nacimiento_user.setTime((partner.usuario.nacimiento))
+      var tipo = partner.usuario.tipo
+      var ocupacion_user = partner.usuario.tipo == "1" ? "Psicologo" : "Estudiante"
     } else {
       var nombre_user = "Usuario"
     }
@@ -103,9 +114,24 @@ class Chat extends React.Component {
             <Button transparent onPress={() => this.showProfile()}>
               <Feather name="user" size={30} />
             </Button>
-            <Button transparent onPress={() => this.setState({registerVisible:true})}>
-              <Feather name="file-text" size={30} />
-            </Button>
+            {partner.usuario.tipo != "1"
+              ?
+              <Button transparent onPress={() => this.verRegistros()}>
+                <Feather name="file-text" size={30} />
+              </Button>
+
+              : null
+            }
+            {partner.usuario.tipo != "1"
+              ?
+              this.props.navigation.getParam("state") == "activo"
+                ? <Button transparent onPress={() => this.setState({ registerVisible: true })}>
+                  <Feather name="file-plus" size={30} />
+                </Button>
+                : null
+              : null
+            }
+
           </Right>
         </Header>
 
@@ -113,16 +139,31 @@ class Chat extends React.Component {
           visible={this.state.registerVisible}
           onTouchOutside={() => this.setState({ registerVisible: false })} >
           <View style={style.containerDialog}>
-              <Textarea rowSpan={5} bordered style={style.TextRegister} placeholder="Textarea" onChangeText={(text) => this.changeText(text)}/>
-              <Button block success onPress={() => this.pressSaveRegister()} style={style.buttonRegister}><Text>Guardar</Text></Button>
+            <Textarea rowSpan={5} bordered style={style.TextRegister} placeholder="Textarea" onChangeText={(text) => this.changeText(text)} />
+            <Button block success onPress={() => this.pressSaveRegister()} style={style.buttonRegister}><Text>Guardar</Text></Button>
           </View>
         </Dialog>
 
         <Dialog
           visible={this.state.profileVisible}
           onTouchOutside={() => this.setState({ profileVisible: false })} >
-          <View style={style.containerDialog}>
+          <View style={tipo == "1" ? style.containerDialogPerfil : style.containerDialog2}>
+            <View style={[{ flex: 1 }, { paddingHorizontal: 20 }]}>
+              <Label>Nombres: {nombre_user}</Label>
+              <Label>Apellidos: {apellidos_user}</Label>
+              <Label>Ocupación: {ocupacion_user}</Label>
+              <Label>Fecha de nacimiento: {nacimiento_user.toDateString()}</Label>
+              {tipo == "1"
+                ? null
+                :
+                <View>
+                  <Label>Semestre: {partner.usuario.semestre}</Label>
+                  <Label>Codigo Estudiantil: {partner.usuario.codigo}</Label>
+                  <Label>Carrera de estudio: {partner.usuario.carrera}</Label>
+                </View>
+              }
 
+            </View>
           </View>
         </Dialog>
 
@@ -133,22 +174,30 @@ class Chat extends React.Component {
             { _id: firebase.uid }
           }
         />
-        {Platform.OS === 'android' ? <KeyboardSpacer topSpacing={32} /> : null}
+        {Platform.OS === 'android' ? <KeyboardSpacer topSpacing={29} /> : null}
       </View>
     );
   }
 }
 
 var style = StyleSheet.create({
-  containerDialog:{
-    height: 200
+  containerDialog: {
+    height: 200,
   },
-  TextRegister:{
-    borderColor:'red',
-    borderWidth:1,
+  containerDialog2: {
+    height: 300,
   },
-  buttonRegister:{
-    marginTop:15
+  containerDialogPerfil: {
+    height: 200,
+    paddingHorizontal: 10,
+    paddingVertical: 10
+  },
+  TextRegister: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  buttonRegister: {
+    marginTop: 15
   }
 })
 

@@ -1,45 +1,31 @@
-import * as React from 'react';
-import { View, StyleSheet, Dimensions, StatusBar, Button,Text } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
-import { Label } from 'native-base';
-
-const FirstRoute = () => (
-    <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
-  
-);
-const SecondRoute = () => (
-  <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
-);
-
-export default class TabViewExample extends React.Component {
-  state = {
-    index: 0,
-    routes: [
-      { key: 'first', title: 'First' },
-      { key: 'second', title: 'Second' },
-    ],
-  };
-
+import React from 'react';
+import { StyleSheet, View, WebView} from 'react-native';
+import PDFReader from 'rn-pdf-reader-js';
+import { Constants } from 'expo';
+ 
+export default class App extends React.Component {
   render() {
     return (
-      <View style={[{flex:1},{paddingHorizontal:20}]}>
-         <Label>Nombres</Label>
-         <Label>Apellidos</Label>
-         <Label>Profesion</Label>
-         <Label>Semestre</Label>
-         <Label>Carrera de estudio</Label>
-         <Label>Fecha de nacimiento</Label>
-
+      <View style={styles.container}>
+        <WebView
+          bounces={false}
+          scrollEnabled={false} 
+          source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/reactnativepf.appspot.com/o/AC201822319663.pdf?alt=media&token=9a301548-55a0-430b-930d-f2b8501c0657' }} />
       </View>
     );
   }
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
-    marginTop: StatusBar.currentHeight
-  },
-  scene: {
     flex: 1,
+    backgroundColor: '#000',
   },
 });
+
+/*
+<PDFReader
+          source={{ uri: "https://firebasestorage.googleapis.com/v0/b/reactnativepf.appspot.com/o/AC201822319663.pdf?alt=media&token=9a301548-55a0-430b-930d-f2b8501c0657" }}
+        />
+
+*/ 

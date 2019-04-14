@@ -119,8 +119,6 @@ class FirebaseDb {
         }
         var { id: _id } = snapshot;
         const message = { _id, createdAt:time, text, user, time:time2};
-        console.log("Listening.....")
-        console.log(message)
         return message;
     }; 
     
@@ -147,7 +145,6 @@ class FirebaseDb {
                 },
                 body: JSON.stringify(data)
             }).then(data => {
-                console.log(data)
             })
         };
     }
@@ -170,10 +167,21 @@ class FirebaseDb {
                     tipo:snap.data().tipo
                 }
                 categories.push(category)
-                //console.log(categories)            
             })
         })
         return categories
+    }
+
+    activeToInactive = async (id) => {
+        var inactive = false
+        await this.firestore.collection("Chat").doc(id).update({
+            state:"inactivo"
+        }).then((value) =>{
+            inactive = true
+        })
+
+        
+        return inactive
     }
 
     CreateNewChat = async (tipo,user) =>{
@@ -215,14 +223,21 @@ class FirebaseDb {
                 idC:this.uid,
                 idP:user.id
             },
-            tipo:tipo
-        }).then(docRef =>{ id = docRef.id })
+            tipo:tipo,
+            state:"activo"
+        }).then(docRef =>{ 
+            id = docRef.id
+         })
         }catch(r){
             return false
         }
-        return [id,undefined]    }
+        console.log("NewID")
+        alert(id)
+        return [id,undefined]  
+    }
 
-    getChat = async (tipo, callback) =>{
+
+    getChat = async (tipo ,callback) =>{
         var chats=undefined
         var infoChats=[]
         var ids=[]
@@ -235,22 +250,19 @@ class FirebaseDb {
         }
 
         var result = await chats.onSnapshot(doc =>{
-            console.log("ALGO CAMBIO")
             if(doc.size>0){
                 var changes = doc.docChanges()
                 changes.forEach( async change =>{
-                    if(change.type=="added"){
-                        var snapshot = change.doc
-                        console.log("TIPO->"+tipo)
+                    var snapshot = change.doc
 
+                    if(change.type=="added" && snapshot.data().state=="activo"){
+                        alert("add")
                         var estudent=undefined
 
                         if(tipo=="1"){
                             estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idC).get() 
-                            console.log(estudent.data())
                         }else{
                             estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idP).get()
-                            console.log(estudent.data())
                         }
 
                         infoChats.push({
@@ -259,17 +271,85 @@ class FirebaseDb {
                             partner:estudent.data()
                         })
                         ids.push(snapshot.id)
+                        var res = [ids,infoChats]
+                        callback(res)
                     }
-                    else{
-                        console.log("Aqui algo cambio")
+                    else if(change.type=="modified" && snapshot.data().state=="inactivo"){
+                        ids = await ids.filter((value,index)=>{
+                            return value != snapshot.id
+                        })
+
+                        infoChats = await infoChats.filter((value,index)=>{
+                            return value.id != snapshot.id
+                        })
+                        var res = [ids,infoChats]
+                        callback(res)
                     }
                 })
-                var res = [ids,infoChats]
-                console.log(res)
-                callback(res)
             }
         })
         //return res
+    }
+
+    getChatInactivos = async (tipo,callback) =>{
+        var chats=undefined
+        var infoChats=[]
+        var ids=[]
+
+        if(tipo=="1"){
+            chats = await this.firestore.collection("Chat").where("usuario.idP","==",this.uid)
+
+        }else{
+            chats = await this.firestore.collection("Chat").where("usuario.idC","==",this.uid)
+        }
+
+        var result = await chats.onSnapshot(doc =>{
+            if(doc.size>0){
+                var changes = doc.docChanges()
+                changes.forEach( async change =>{
+                    var snapshot = change.doc
+
+                    if(snapshot.data().state=="inactivo"){
+
+                        var estudent=undefined
+
+                        if(tipo=="1"){
+                            estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idC).get() 
+                        }else{
+                            estudent = await this.firestore.collection("Usuario").doc(snapshot.data().usuario.idP).get()
+                        }
+
+                        infoChats.push({
+                            id:snapshot.id, 
+                            body:snapshot.data(),
+                            partner:estudent.data()
+                        })
+                        ids.push(snapshot.id)
+
+                        var res = [ids,infoChats]
+                        callback(res)
+                    }
+                })
+            }
+        })
+        //return res
+    }
+
+    allRegisterUser = async (id) =>{
+        var contenido=[]
+        await this.firestore.collection("Chat").doc(id).collection("Registro").get().then(snapshot =>{
+            snapshot.forEach((snap) =>{
+                var title = new Date()
+                title.setTime(snap.data().date.seconds*1000)
+
+                var content = snap.data().text
+                contenido.push({
+                    title:"Fecha de Creación "+title.toDateString(),
+                    content:content
+                })
+            })
+        })
+        return contenido
     }
 }
 

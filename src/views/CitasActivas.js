@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { View, FlatList, TouchableHighlight } from 'react-native';
-import { Text, Label } from 'native-base'
+import { Text, Label, Button } from 'native-base'
 import { Dialog } from 'react-native-simple-dialogs'
 import { LoadCategory } from '../../accion/CategoryAction'
 import firebase from '../config/firebase'
 import ActionButton from 'react-native-action-button';
 import { connect } from 'react-redux';
 import { LoadChat } from '../../accion/ChatAction'
+import { AntDesign } from 'react-native-vector-icons'
+import { withNavigation } from 'react-navigation';
 
 class Citas_Activas extends Component {
   constructor(props) {
@@ -23,9 +25,9 @@ class Citas_Activas extends Component {
 
   async componentDidMount() {
     await firebase.getChat(this.props.credentials.Auth.usuario.tipo, async (chats) => {
-      console.log("Nuevo Mensaje")
       await this.props.SaveChats(chats[1])
       this.setState({ chats: chats[0] })
+      alert("addCHat")
       setTimeout(() => {this.setState({ chatReady: true })}, 1000)
     });
   }
@@ -54,20 +56,23 @@ class Citas_Activas extends Component {
     this.setState({ dialogWaiting: true })
     this.setState({ dialogVisible: false })
     var result2 = await firebase.CreateNewChat(result[0].nombre, this.props.credentials.Auth)
+    
     if (result2 == false) {
       alert("No hay psicologos disponibles, intente mas tarde")
+      this.setState({ dialogWaiting: false })
     } else {
-      setTimeout(() => { this.chatPress(result2[0]) }, 600)
+      setTimeout(() => {
+        this.chatPress(result2[0]) 
+        this.setState({ dialogWaiting: false })
+      }, 1000)
     }
-    this.setState({ dialogWaiting: false })
   }
 
 
   chatPress = async (id) => {
     var result = this.props.chats.chat.filter(chat => { return chat.id == id })
-
     if (result.length > 0) {
-      this.props.navigation.navigate("chat", { actual: result[0], id: id })
+      this.props.navigation.navigate("chat", { actual: result[0], id: id, state:"activo" })
 
     } else {
       alert("No se pudo obtener la conversación")
@@ -84,13 +89,40 @@ class Citas_Activas extends Component {
     )
   }
 
+  _dialogVisible = () =>{
+    if(this.props.credentials.Auth.usuario.numChat<=40){
+      this.setState({ dialogVisible: true })
+    }else{
+      alert("ha excedido el numero de chats disponibles")
+    }
+  }
+
+  changeChatToInactive = (id) =>{
+    if(firebase.activeToInactive(id)){
+      alert("El chat ha sido cerrado y archivado")
+    }else{
+      alert("El no ha podido ser archivado")
+    }
+
+  }
+
+
   renderItemChat = (item) => {
     try {
       return (
-        <View style={{ flex: 1 }}>
-          <TouchableHighlight onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
+        <View style={[{ flex: 1 },{flexDirection:'row'}, Border("red")]}>
+          <TouchableHighlight style={{flex:3}} onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
             <Text style={[{ paddingVertical: 10 }, { paddingHorizontal: 4 }]}>{this.props.chats.chat[item.index].body.tipo}-{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
           </TouchableHighlight>
+          <Button transparent style={[
+              Border("yellow"),
+              {flex:1},
+              {justifyContent:"flex-end"},
+              {paddingHorizontal:20}]} 
+              onPress={() => this.changeChatToInactive(this.props.chats.chat[item.index].id)}>
+              
+              <AntDesign name="close" size={20} ></AntDesign>
+          </Button>
         </View>
       )
     } catch{
@@ -138,16 +170,23 @@ class Citas_Activas extends Component {
 
           : <Text>No hay Chats Disponibles</Text>}
 
-        {this.props.credentials.Auth.usuario.tipo == "3"
+        {this.props.credentials.Auth.usuario.tipo == "1"
           ?
           null
           :
           <ActionButton
             buttonColor="rgba(89,165,89,1)"
-            onPress={() => this.setState({ dialogVisible: true })} />
+            onPress={() => this._dialogVisible()} />
         }
       </View>
     );
+  }
+}
+
+Border = (color) => {
+  return {
+    borderColor: color,
+    borderWidth: 1,
   }
 }
 
@@ -165,5 +204,5 @@ const mapDispatchToProps = dispatch => {
     SaveChats: (chat) => dispatch(LoadChat(chat))
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Citas_Activas)
+const citas = withNavigation(Citas_Activas)
+export default connect(mapStateToProps, mapDispatchToProps)(citas)

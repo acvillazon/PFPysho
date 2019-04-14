@@ -15,7 +15,10 @@ class Register extends Component {
             dateChoosen: new Date(),
             selected: undefined,
             nombres: '',
-            apellidos: ''
+            apellidos: '',
+            codigo: undefined,
+            semestre:undefined,
+            carrera:undefined
         }
     }
 
@@ -31,40 +34,55 @@ class Register extends Component {
         this.setState({ nombres })
     }
 
+    onChangecodigo = codigo => {
+        this.setState({ codigo })
+    }
+
+    onChangesemestre = semestre => {
+        this.setState({ semestre })
+    }
+
+    onChangecarrera = carrera => {
+        this.setState({ carrera })
+    }
+
     onChangeApellidos = apellidos => {
         this.setState({ apellidos })
     }
 
-    registerNewUser = async () =>{
-        if(this.state.selected!=undefined && this.state.nombres!='' && this.state.apellidos!=''){
+    registerNewUser = async () => {
+        if (this.state.selected != undefined && this.state.nombres != '' && this.state.apellidos != '') {
             timesMilles = (this.state.dateChoosen).valueOf()
 
-            var newUser={
-                nombre: this.state.nombres,
+            var newUser = {
+                nombres: this.state.nombres,
                 apellidos: this.state.apellidos,
                 nacimiento: timesMilles,
-                tipo:this.state.selected,
-                state:true,
-                numChat:0
+                tipo: this.state.selected,
+                state: false,
+                numChat: 0,
+                carrera:this.state.carrera,
+                semestre:this.state.semestre,
+                codigo:this.state.codigo
             }
-            await firebase.RegisterUserForFirstAccess(newUser).then(status =>{
+            await firebase.RegisterUserForFirstAccess(newUser).then(status => {
                 alert("Usuario Registrado!")
-                this.props.navigation.navigate('chat')
+                this.props.navigation.navigate('login')
             })
-        }else{
+        } else {
             alert("Complete Todos los Campos.")
         }
     }
 
     render() {
         return (
-            <KeyboardAvoidingView enabled behavior="padding" style={[styles.container, styles.center, {backgroundColor:"#757575"}]}>
+            <KeyboardAvoidingView enable behavior="padding" style={[styles.container, styles.center]}>
                 <View>
                     <Label style={[{ color: "#757575", fontSize: 15 }]}>Nombres</Label>
                     <Item>
                         <Input
-                        value={this.state.nombres}
-                        onChangeText={this.onChangeNombres}
+                            value={this.state.nombres}
+                            onChangeText={this.onChangeNombres}
                         />
                     </Item>
                 </View>
@@ -73,8 +91,8 @@ class Register extends Component {
                     <Label style={[{ color: "#757575", fontSize: 15 }]}>Apellidos</Label>
                     <Item>
                         <Input
-                        value={this.state.apellidos}
-                        onChangeText={this.onChangeApellidos}
+                            value={this.state.apellidos}
+                            onChangeText={this.onChangeApellidos}
                         />
                     </Item>
                 </View>
@@ -107,12 +125,50 @@ class Register extends Component {
                             placeholderIconColor="#007aff"
                             selectedValue={this.state.selected}
                             onValueChange={this.setTypeUser}
-                        >
+                        >   
+                            <Picker.Item label="Seleccionar..." value="100" />                            
                             <Picker.Item label="Estudiante" value="0" />
                             <Picker.Item label="Psicologo" value="1" />
                         </Picker>
                     </Item>
                 </View>
+
+                {this.state.selected == "0"
+                    ?
+                    <View>
+                        <View>
+                            <Label style={[{ color: "#757575", fontSize: 15 }]}>Codigo estudiantil</Label>
+                            <Item>
+                                <Input
+                                    value={this.state.codigo}
+                                    onChangeText={this.onChangecodigo}
+                                />
+                            </Item>
+                        </View>
+
+                        <View>
+                            <Label style={[{ color: "#757575", fontSize: 15 }]}>Semestre</Label>
+                            <Item>
+                                <Input
+                                    value={this.state.semestre}
+                                    onChangeText={this.onChangesemestre}
+                                />
+                            </Item>
+                        </View>
+
+                        <View>
+                            <Label style={[{ color: "#757575", fontSize: 15 }]}>Carrera</Label>
+                            <Item>
+                                <Input
+                                    value={this.state.carrera}
+                                    onChangeText={this.onChangecarrera}
+                                />
+                            </Item>
+                        </View>
+
+                    </View>
+                    : null
+                }
 
                 <Button success block onPress={this.registerNewUser}>
                     <Text> REGISTRAR </Text>

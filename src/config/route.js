@@ -4,6 +4,9 @@ import Register from '../views/Register'
 import Prueba from '../components/Prueba'
 import Categoria from '../components/Categoria';
 import ChatActivos from '../views/CitasActivas'
+import Registro from '../views/Registros'
+import Inactivos from '../views/ChatsInactivos'
+import TabViewChat from '../views/TabViewChat';
 
 export const route = {
     login:Login,
@@ -11,6 +14,9 @@ export const route = {
     chat:Chat,
     register:Register,
     activos:ChatActivos,
+    registro:Registro,
+    inactivos:Inactivos,
+    tabViewChat:TabViewChat
 }
 
 export default route

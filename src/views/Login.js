@@ -19,7 +19,7 @@ class Login extends Component {
         super(props)
         this.state = {
             loading:false,
-            email: 'andres@hotmail.com',
+            email: 'andres@gmail.com',
             password: '123456',
         }
     }
@@ -38,7 +38,6 @@ class Login extends Component {
             return;
           }
         }
-        alert("Si permisos")
         //Obtener el Token para notificaciones.
         let token = await Notifications.getExpoPushTokenAsync();        
         firebaseApp.RegisterTokenInUsers(token)
@@ -63,20 +62,22 @@ class Login extends Component {
                 console.log("El usuario ya existe")
                 ExistinDatabase = exist
             })
-        this.registerForNotification();
 
         if (ExistinDatabase) {
+            this.registerForNotification();
             var user = await firebaseApp.getAuth()
             await this.props.saveAuth(user)
             await firebaseApp.LogInUsuario(firebaseApp.uid)
             this.setState({loading:false})
 
-            this.props.navigation.navigate('activos',
+            this.props.navigation.navigate('tabViewChat',
             {
                 name: this.state.email
             })
         } else {
             this.props.navigation.navigate('register')
+            this.setState({loading:false})
+
         }
 
     }; 
