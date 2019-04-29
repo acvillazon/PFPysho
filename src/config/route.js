@@ -16,6 +16,7 @@ import Foro from '../views/Foro'
 import Comentarios from '../views/Comentarios'
 import CreateEvent from '../views/CreateEvent'
 import DateTime from '../views/TimeDatePcker'
+import Menu from '../views/Menu'
 
 
 export const route = {
@@ -35,7 +36,8 @@ export const route = {
     emergencycall: EmergencyCall,
     categoriasforo: CategoriasForo,
     foro:Foro,
-    comentarios: Comentarios
+    comentarios: Comentarios,
+    menu:Menu
 }
 
 export default route

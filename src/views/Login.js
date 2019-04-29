@@ -151,7 +151,7 @@ class Login extends Component {
             await firebaseApp.LogInUsuario(firebaseApp.uid)
             this.setState({ loading: false })
 
-            this.props.navigation.navigate('calendar',
+            this.props.navigation.navigate('menu',
                 {
                     name: this.state.email
                 })
