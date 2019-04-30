@@ -29,9 +29,9 @@ class UploadDocuments extends React.Component {
             name.forEach(obj =>{
                 documentos.push(obj.name)
             })
-            console.log('URI')
-            console.log(name)
-            console.log(uri)
+            //console.log('URI')
+            //console.log(name)
+            //console.log(uri)
             this.setState({uri:uris})
             this.setState({documets:documentos})
         })

@@ -54,8 +54,8 @@ export default class CategoriasForo extends Component {
 
 
     render() {
-        console.log(this.state.names)
-        console.log(this.state.photos)
+        //console.log(this.state.names)
+        //console.log(this.state.photos)
         return (
             <View style={{ backgroundColor: '#fff' }}>
                 <FlatList

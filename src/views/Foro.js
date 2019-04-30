@@ -51,7 +51,7 @@ export default class CardImageExample extends Component {
         */
 
       })
-      console.log(preg)
+      //console.log(preg)
       this.setState({ fechas: fech, preguntas: preg, titulos: tit, ids })
 
     })

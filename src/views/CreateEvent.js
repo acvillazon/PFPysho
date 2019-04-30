@@ -72,7 +72,7 @@ export default class CreateEvent extends Component {
             })
 
         } else {
-            console.log(this.state)
+            //console.log(this.state)
             alert("Existen campos sin llenar o la hora del evento esta erronea")
         }
     }

@@ -59,7 +59,6 @@ export default class AgendaScreen extends Component {
         items: newItems
       });
     }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
   }
 
   renderItem(item) {

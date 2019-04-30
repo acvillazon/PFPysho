@@ -44,8 +44,8 @@ export default class AgendaScreen extends Component {
   }
 
   _onDayPress = (day) => {
-    console.log("El dia es:")
-    console.log(day)
+    //console.log("El dia es:")
+    //console.log(day)
   }
 
   createEvent = () => { this.props.navigation.navigate("createEvent") }
@@ -91,7 +91,7 @@ export default class AgendaScreen extends Component {
     return (
       <View style={{ flex: 1 }}>
         <Agenda
-          monthFormat={"MMM yyyy"}
+          monthFormat={"MMMM yyyy"}
           items={this.state.items}
           onDayPress={this._onDayPress}
           // callback that gets called when day changes while scrolling agenda list
@@ -101,9 +101,9 @@ export default class AgendaScreen extends Component {
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
           refreshing={false}
+          renderEmptyData={() => <View style={[{flex:1},{justifyContent:"center"},{alignItems:'center'}]}><Text>NO EXISTEN EVENTOS EN ESTA FECHA</Text></View>}
           onRefresh={() => this._isRefreshing()}
           markedDates={this.state.itemsMarked}
-          monthFormat={'yyyy'}
         />
 
         <ActionButton

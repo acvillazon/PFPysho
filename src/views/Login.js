@@ -70,9 +70,9 @@ class Login extends Component {
         var response = await Promise.resolve(res).then((value) => {
             return value
         })
-        console.log(response)
+        //console.log(response)
         if (response == null) {
-            console.log("newToken ->" + NewToken.toString())
+            //console.log("newToken ->" + NewToken.toString())
             var object = {
                 id: 1,
                 Pushtoken: NewToken.toString()
@@ -136,7 +136,7 @@ class Login extends Component {
     loginSuccess = async () => {
         var user = undefined
         var ExistinDatabase = true;
-        console.log("Inicio de sesion exitoso")
+        //console.log("Inicio de sesion exitoso")
 
         await firebaseApp.getUser().then((value) => {
             if (value[0]) {

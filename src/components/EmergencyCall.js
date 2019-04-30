@@ -11,9 +11,6 @@ const args = {
     render(){
         return(
             <View>
-                <Text>
-                    HOLAAAAAAAAAAA
-                </Text>
                 <TouchableOpacity style={styles.button}  onPress={() => {
                      call(args).catch(console.error)}}>
                 <Text style={styles.text}>EMERGENCY CALL</Text>

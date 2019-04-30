@@ -38,7 +38,7 @@ export default class Comentarios extends Component {
             })
 
             this.setState({ comentarios: comment })
-            console.log(this.state.comentarios)
+            //console.log(this.state.comentarios)
         })
 
     }
