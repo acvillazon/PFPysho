@@ -56,7 +56,7 @@ class TabChat extends Component {
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} labelStyle={[{color:'#20B2AA'}]} tabStyle={Styles.tabStyles} indicatorStyle={[{backgroundColor:'#66CDAA'}, {height:3}]} style={Styles.tabBar}/>;
+    _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} labelStyle={[{color:'#45B39D'}]} tabStyle={Styles.tabStyles} indicatorStyle={[{backgroundColor:'#66CDAA'}, {height:3}]} style={Styles.tabBar}/>;
 
    renderScene = ({ route }) => {
       switch (route.key) {

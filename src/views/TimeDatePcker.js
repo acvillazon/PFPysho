@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     },
     icons:{
         alignSelf: 'center',
-        color: /*"#FF5252"*/ "#03A9F4"  ,
+        color: /*"#FF5252"*/ "#5499C7"  ,
         paddingLeft: 10,
         flex: 1
     },
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
     },
     textClock:{
         fontSize:12,
-        color:"#03A9F4"
+        color:"#5499C7"
     },
     btnClock:{
-        borderColor:"#03A9F4",
+        borderColor:"#5499C7",
         flex:12
     }
 })

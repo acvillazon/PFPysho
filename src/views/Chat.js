@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, View, StyleSheet, Image, ScrollView } from 'react-native'
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { Notifications, Permissions } from 'expo'
 import { Feather } from 'react-native-vector-icons'
 import { Header, Text, Button, Left, Right, Label, Body, Title, Textarea } from 'native-base';
@@ -9,6 +9,7 @@ import { Dialog } from 'react-native-simple-dialogs'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import jefe from '../config/jefe.png'
+import registro_as from '../images/bloc.png'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class Chat extends React.Component {
     firebase.refOnFirestore(citaid, message =>
       this.setState(previousState => ({
         messages: GiftedChat.append(previousState.messages, message),
-      })),() =>{
+      })), () => {
         firebase.deleteChat_NewMessage(this.state.thisChat)
       });
   }
@@ -79,6 +80,17 @@ class Chat extends React.Component {
     }
   }
 
+  renderBubble = props => {
+    return (
+      <Bubble {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#66CDAA'
+          }
+        }} />
+    )
+  }
+
   pressSaveRegister = () => {
     firebase.SaveRegister(this.props.navigation.getParam("id"), this.state.textDialog)
     this.setState({ textDialog: undefined, registerVisible: false })
@@ -92,6 +104,7 @@ class Chat extends React.Component {
       id: this.state.id
     })
   }
+
 
   render() {
     if (this.props.navigation.getParam("actual") != undefined) {
@@ -108,24 +121,24 @@ class Chat extends React.Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <Header style={{ backgroundColor: '#1976D2' }}>
+        <Header style={{ backgroundColor: '#45B39D' }}>
           <Left>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Feather name="arrow-left" size={30} />
+              <Feather name="arrow-left" color="white" size={30} />
             </Button>
           </Left>
           <Body>
-            <Title>{nombre_user}</Title>
+            <Title style={{ color: 'white' }}>{nombre_user}</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.showProfile()}>
-              <Feather name="user" size={30} />
+              <Feather name="user" color="white" size={30} />
             </Button>
 
             {this.props.credentials.Auth.usuario.tipo == "1"
               ?
               <Button transparent onPress={() => this.verRegistros()}>
-                <Feather name="file-text" size={30} />
+                <Feather name="file-text" color="white" size={30} />
               </Button>
 
               : null
@@ -135,7 +148,7 @@ class Chat extends React.Component {
               ?
               this.props.navigation.getParam("state") == "activo"
                 ? <Button transparent onPress={() => this.setState({ registerVisible: true })}>
-                  <Feather name="file-plus" size={30} />
+                  <Feather name="file-plus" color="white" size={30} />
                 </Button>
                 : null
               : null
@@ -145,18 +158,26 @@ class Chat extends React.Component {
         </Header>
 
         <Dialog
+          style={{borderRadius:20}}
           visible={this.state.registerVisible}
           onTouchOutside={() => this.setState({ registerVisible: false })} >
-          <View style={style.containerDialog}>
-            <Textarea rowSpan={5} bordered style={style.TextRegister} placeholder="Textarea" onChangeText={(text) => this.changeText(text)} />
-            <Button block success onPress={() => this.pressSaveRegister()} style={style.buttonRegister}><Text>Guardar</Text></Button>
+          <View style={[{ padding: 15 }, { borderColor: '#9E9E9E' }, { borderWidth: 1 }, { borderRadius: 10 }]}>
+            <View style={style.containerImage}>
+              <Image source={registro_as} style={[style.imageStyle]} />
+            </View>
+            <ScrollView
+              scrollEnabled={true}
+            >
+            <Textarea rowSpan={7} bordered style={style.TextRegister} placeholder="Registro...." onChangeText={(text) => this.changeText(text)} />
+            <Button block onPress={() => this.pressSaveRegister()} style={style.buttonRegister}><Text>Guardar</Text></Button>
+            </ScrollView>
           </View>
         </Dialog>
 
         <Dialog
           visible={this.state.profileVisible}
           onTouchOutside={() => this.setState({ profileVisible: false })} >
-          <View style={[{padding:15},{borderColor:'#9E9E9E'},{borderWidth:1},{borderRadius:10}]}>
+          <View style={[{ padding: 15 }, { borderColor: '#9E9E9E' }, { borderWidth: 1 }, { borderRadius: 10 }]}>
             <View style={style.containerImage}>
               <Image source={jefe} style={[style.imageStyle]} />
             </View>
@@ -190,6 +211,7 @@ class Chat extends React.Component {
         <GiftedChat
           messages={this.state.messages}
           onSend={this.onSend}
+          renderBubble={this.renderBubble}
           user={
             { _id: firebase.uid }
           }
@@ -213,11 +235,13 @@ var style = StyleSheet.create({
     paddingVertical: 10
   },
   TextRegister: {
-    borderColor: 'red',
+    borderColor: '#66CDAA',
+    borderRadius:2,
     borderWidth: 1,
   },
   buttonRegister: {
-    marginTop: 15
+    marginTop: 15,
+    backgroundColor:'#66CDAA'
   },
   containerImage: {
     flex: 0,
@@ -225,13 +249,13 @@ var style = StyleSheet.create({
     alignItems: 'center',
   }, labelDialog: {
     marginVertical: 5
-  },imageStyle:{
-    width: 140, 
+  }, imageStyle: {
+    width: 140,
     height: 140,
     marginTop: -100,
-  },text:{
-    fontWeight:'bold',
-    color:'blue'
+  }, text: {
+    fontWeight: 'bold',
+    color: '#45B39D'
   }
 })
 

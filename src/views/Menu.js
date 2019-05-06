@@ -6,6 +6,7 @@ import BottomNavigation, {
   Badge
 } from 'react-native-material-bottom-navigation'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
+import {MaterialIcons} from 'react-native-vector-icons'
 
 import Chat from './TabViewChat'
 import Calendar from './Calendar'
@@ -22,14 +23,14 @@ export default class Menu extends React.Component {
     {
       key: 'chat',
       label: 'Games',
-      barColor: '#66CDAA',
+      barColor: '#45B39D',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'gamepad-variant'
+      icon: 'message'
     },
     {
       key: 'calendar',
       label: 'Movies & TV',
-      barColor: '#00695C',
+      barColor: '#5499C7',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'movie'
     },
@@ -85,7 +86,7 @@ export default class Menu extends React.Component {
   }
 
   renderIcon = icon => ({ isActive }) => (
-    <Icon size={24} color="white" name={icon} />
+    <MaterialIcons size={24} color="white" name={icon} />
   )
 
   renderTab = ({ tab, isActive }) => (

@@ -6,6 +6,8 @@ import firebase from '../config/firebase'
 import { Ionicons } from 'react-native-vector-icons'
 import { Dialog } from 'react-native-simple-dialogs'
 import { Button } from 'native-base';
+import { withNavigation } from 'react-navigation';
+
 
 LocaleConfig.locales['fr'] = {
   monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -16,7 +18,7 @@ LocaleConfig.locales['fr'] = {
 
 LocaleConfig.defaultLocale = 'fr';
 
-export default class AgendaScreen extends Component {
+class AgendaScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -72,7 +74,7 @@ export default class AgendaScreen extends Component {
         </View>
         <View style={[{ flex: 1 }, { justifyContent: "center" }, { textAlign: "right" }]}>
           <TouchableHighlight onPress={() => this._extraInformation(item.descripcion)}>
-            <Ionicons name="md-eye" size={27} style={[{ color: "#9E9E9E" }]} />
+            <Ionicons name="md-eye" size={27} style={[{ color: "#7B7D7D" }]} />
           </TouchableHighlight>
         </View>
       </View>
@@ -92,19 +94,25 @@ export default class AgendaScreen extends Component {
           renderItem={this.renderItem.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
           refreshing={false}
+          theme={{
+            agendaDayTextColor: '#7B7D7D',
+            agendaDayNumColor: '#7B7D7D',
+            agendaTodayColor: '#5499C7',
+            agendaKnobColor: '#5499C7'
+          }}
           renderEmptyData={() =><View style={[{flex:1},{justifyContent:"center"},{alignItems:'center'}]}><Text>NO EXISTEN EVENTOS EN ESTA FECHA</Text></View>}
           onRefresh={() => this._isRefreshing()}
           markedDates={this.state.itemsMarked}
         />
 
         <ActionButton
-          buttonColor="#03A9F4"
-          renderIcon={() => <Ionicons name="md-calendar" size={30} style={{ color: "white" }} />}
+          buttonColor="#5499C7"
+          renderIcon={() => <Ionicons name="md-calendar" size={30} color="#fff"/>}
           onPress={() => this.createEvent()} />
 
         {this.state.loading == true
           ? <View style={styles.indicator}>
-            <ActivityIndicator size="large" color="#03A9F4" />
+            <ActivityIndicator size="large" color="#7B68EE" />
           </View>
           : null
         }
@@ -161,6 +169,7 @@ const styles = StyleSheet.create({
   }
 });
 
+export default withNavigation(AgendaScreen)
 /**
  *
  * <Agenda

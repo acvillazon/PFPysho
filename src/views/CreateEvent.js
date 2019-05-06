@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet} from 'react-native';
-import { Header, Button, Input, Item, Textarea, Text } from 'native-base'
+import { View, StyleSheet } from 'react-native';
+import { Header, Button, Input, Item, Textarea, Text, Body, Title, Left, Right } from 'native-base'
 import TimeDatePicker from '../views/TimeDatePcker'
 import firebase from '../config/firebase'
+import { Feather } from 'react-native-vector-icons'
+
 
 export default class CreateEvent extends Component {
     constructor(props) {
@@ -56,7 +58,7 @@ export default class CreateEvent extends Component {
         ) {
             await firebase.addNewEvent(this.state.date, this.state.dateChoose, this.state.timeStartChoose, this.state.timeEndChoose, this.state.nameEvent, this.state.descriptionEvent)
             alert("Evento agregado")
-            this.props.navigation.navigate("calendar")
+            this.props.navigation.goBack()
 
             this.setState({
                 descriptionEvent: '',
@@ -80,9 +82,18 @@ export default class CreateEvent extends Component {
     render() {
         return (
             <View style={[{ flex: 1 }]}>
-                <Header />
+                <Header style={{ backgroundColor: '#5499C7' }}>
+                    <Left>
+                        <Button transparent onPress={() => this.props.navigation.goBack()}>
+                            <Feather name="arrow-left" color="white" size={25} />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>NUEVO EVENTO</Title>
+                    </Body>
+                    <Right />
+                </Header>
                 <View style={styleCreateEvent.containerAddEvent}>
-                    <Text style={styleCreateEvent.titleAddEvent}>CREAR NUEVO EVENTO</Text>
                     <Item>
                         <Input
                             placeholderTextColor="#757575"
@@ -106,7 +117,7 @@ export default class CreateEvent extends Component {
                     />
 
                     <Button
-                        success block
+                        block
                         style={styleCreateEvent.btnAddEvent}
                         onPress={() => this.sendEvent()}>
 
@@ -128,7 +139,7 @@ Border = (color) => {
 
 const styleCreateEvent = StyleSheet.create({
     btnAddEvent: {
-        backgroundColor: "#03A9F4",
+        backgroundColor: "#5499C7",
         marginTop: 20
     },
     txtAddEvent: {

@@ -1,7 +1,7 @@
 //CAMBIO
 import React, { Component } from 'react';
-import { View, FlatList, TouchableHighlight, Image, Alert } from 'react-native';
-import { Label, Button, ListItem, Left, Body, Right, Thumbnail, Text, Badge } from 'native-base'
+import { View, FlatList, TouchableHighlight, Image, Alert, StyleSheet } from 'react-native';
+import { Label, Button, ListItem, Left, Body, Right, Thumbnail, Text, Badge, Card, CardItem } from 'native-base'
 import { Dialog } from 'react-native-simple-dialogs'
 import { LoadCategory } from '../../accion/CategoryAction'
 import firebase from '../config/firebase'
@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import { LoadChat } from '../../accion/ChatAction'
 import { AntDesign, MaterialIcons } from 'react-native-vector-icons'
 import { withNavigation } from 'react-navigation';
+import splah_chat from '../images/splash_chat3.png'
+
 
 class Citas_Activas extends Component {
   constructor(props) {
@@ -30,7 +32,7 @@ class Citas_Activas extends Component {
       await this.props.SaveChats(chats[1])
       this.setState({ chats: chats[0] })
       setTimeout(() => { this.setState({ chatReady: true }) }, 1000)
-    },(a)=>{},(idChat) => {
+    }, (a) => { }, (idChat) => {
       var snap = this.state.newMessage
       snap[idChat] = idChat
       this.setState({ newMessage: snap })
@@ -133,39 +135,39 @@ class Citas_Activas extends Component {
   renderItemChat = (item) => {
     try {
       return (
-        <ListItem avatar>
-          <Left>
-            <Thumbnail source={{ uri: this.props.chats.chat[item.index].partner.usuario.avatar }} />
-          </Left>
-          <Body>
-            <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
-              <View>
-                <Text>{this.props.chats.chat[item.index].body.tipo}</Text>
-                <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
-              </View>
-
-            </Button>
-          </Body>
-          <Right>
-            <View style={[{ flex: 1 }, { flexDirection: 'row' }]}>
-              {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
-                ?
-                <View style={[{justifyContent:'center'},{marginRight:5}]}>
-                  <Badge warning style={[{ justifyContent: 'center' }]}>
-                    <AntDesign name="exclamation" size={15} />
-                  </Badge>
+          <ListItem avatar>
+            <Left>
+              <Thumbnail source={{ uri: this.props.chats.chat[item.index].partner.usuario.avatar }} />
+            </Left>
+            <Body>
+              <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
+                <View>
+                  <Text style={{color:'#626567'}}>{this.props.chats.chat[item.index].body.tipo}</Text>
+                  <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
                 </View>
-                : null
-              }
-              <Button onPress={() => this._alertBeforeCloseChat(this.props.chats.chat[item.index])}
-                transparent
 
-              >
-                <AntDesign name="closecircleo" size={24} style={{ color: "red" }} />
               </Button>
-            </View>
-          </Right>
-        </ListItem>
+            </Body>
+            <Right>
+              <View style={[{ flex: 1 }, { flexDirection: 'row' }]}>
+                {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
+                  ?
+                  <View style={[{ justifyContent: 'center' }, { marginRight: 5 }]}>
+                    <Badge warning style={[{ justifyContent: 'center' }]}>
+                      <AntDesign name="exclamation" size={15} />
+                    </Badge>
+                  </View>
+                  : null
+                }
+                <Button onPress={() => this._alertBeforeCloseChat(this.props.chats.chat[item.index])}
+                  transparent
+
+                >
+                  <AntDesign name="minuscircle" size={20} style={{ color: "#FF7F50" }} />
+                </Button>
+              </View>
+            </Right>
+          </ListItem>
       )
     } catch{
       return (
@@ -203,15 +205,19 @@ class Citas_Activas extends Component {
 
         {this.state.chatReady == true ?
           <FlatList
-            style={{ ƒlex: 1 }}
+            style={[{ ƒlex: 1 },{marginHorizontal:5}]}
             extraData={this.state}
             data={this.state.chats}
-            numberOfLines={5}
             keyExtractor={(item, index) => index.toString()}
             renderItem={this.renderItemChat}
           />
 
-          : <Text style={{padding:20}}>No hay Chats Disponibles</Text>}
+          : 
+            <View style={Styles.splah}>
+              <Image style={[{marginLeft:30}]} source={splah_chat}></Image>
+              <Text style={[{color:'#808388'},{marginTop: 30}]}>No hay chats disponibles</Text>
+            </View>
+          }
 
         {this.props.credentials.Auth.usuario.tipo == "1"
           ?
@@ -219,13 +225,22 @@ class Citas_Activas extends Component {
           :
           <ActionButton
             renderIcon={() => <AntDesign name="message1" size={30} style={{ color: "white" }} />}
-            buttonColor="#03A9F4"
+            buttonColor="#45B39D"
             onPress={() => this._dialogVisible()} />
         }
       </View>
     );
   }
 }
+
+const Styles = StyleSheet.create({
+  splah:{
+    flex:1,
+    justifyContent:'center',
+    alignItems: 'center',
+    paddingLeft: 20,
+  }
+})
 
 Border = (color) => {
   return {

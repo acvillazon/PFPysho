@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, TouchableHighlight } from 'react-native';
+import { View, FlatList, TouchableHighlight, StyleSheet,Image } from 'react-native';
 import { Text, Label, Button, ListItem, Left, Right, Body, Thumbnail,Badge} from 'native-base'
 import { LoadCategory } from '../../accion/CategoryAction'
 import firebase from '../config/firebase'
@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import {LoadChatInactivo } from '../../accion/ChatAction'
 import { withNavigation } from 'react-navigation';
 import { AntDesign} from 'react-native-vector-icons'
+import splah_chat from '../images/splash_chat3.png'
 
 
 class Citas_Inactivas extends Component {
@@ -55,7 +56,7 @@ class Citas_Inactivas extends Component {
       alert("No se pudo obtener la conversación")
     }
   }
-
+  
   renderItemChat = (item) => {
     try {
       return (
@@ -64,24 +65,27 @@ class Citas_Inactivas extends Component {
             <Thumbnail source={{ uri: this.props.chats.chat[item.index].partner.usuario.avatar }} />
           </Left>
           <Body>
-            <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
-              <View>
-                <Text>{this.props.chats.chat[item.index].body.tipo}</Text>
-                <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
-              </View>
-            </Button>
-          </Body>
-          <Right>
-          {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
-                ?
-                <View style={[{justifyContent:'center'},{marginRight:5}]}>
-                  <Badge warning style={[{ justifyContent: 'center' }]}>
-                    <AntDesign name="exclamation" size={15} />
-                  </Badge>
+              <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
+                <View>
+                  <Text style={{color:'#626567'}}>{this.props.chats.chat[item.index].body.tipo}</Text>
+                  <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
                 </View>
-                : null
-              }
-          </Right>
+
+              </Button>
+            </Body>
+            <Right>
+              <View style={[{ flex: 1 }, { flexDirection: 'row' }]}>
+                {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
+                  ?
+                  <View style={[{ justifyContent: 'center' }, { marginRight: 5 }]}>
+                    <Badge warning style={[{ justifyContent: 'center' }]}>
+                      <AntDesign name="exclamation" size={15} />
+                    </Badge>
+                  </View>
+                  : null
+                }
+              </View>
+            </Right>
         </ListItem>
       )
     } catch{
@@ -104,11 +108,23 @@ class Citas_Inactivas extends Component {
             renderItem={this.renderItemChat}
           />
 
-          : <Text>No hay Chats Disponibles</Text>}
+          : <View style={Styles.splah}>
+              <Image style={[{marginLeft:30}]} source={splah_chat}></Image>
+              <Text style={[{color:'#808388'},{marginTop: 30}]}>No hay chats disponibles</Text>
+            </View>}
       </View>
     );
   }
 }
+
+const Styles = StyleSheet.create({
+  splah:{
+    flex:1,
+    justifyContent:'center',
+    alignItems: 'center',
+    paddingLeft: 0,
+  }
+})
 
 Border = (color) => {
   return {
