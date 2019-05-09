@@ -56,7 +56,7 @@ class TabChat extends Component {
 
     _handleIndexChange = index => this.setState({ index });
 
-    _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} labelStyle={[{color:'#45B39D'}]} tabStyle={Styles.tabStyles} indicatorStyle={[{backgroundColor:'#66CDAA'}, {height:3}]} style={Styles.tabBar}/>;
+    _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} labelStyle={[{color:'white'}]} tabStyle={Styles.tabStyles} indicatorStyle={[{backgroundColor:'#31bdff'}, {height:3}]} style={Styles.tabBar}/>;
 
    renderScene = ({ route }) => {
       switch (route.key) {
@@ -103,7 +103,7 @@ class TabChat extends Component {
 
 const Styles = StyleSheet.create({
     tabBar:{
-      backgroundColor: 'white',
+      backgroundColor: '#6f54da',
       fontWeight: 'bold',
       color: '#66CDAA'
     }

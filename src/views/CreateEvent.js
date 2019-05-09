@@ -82,7 +82,7 @@ export default class CreateEvent extends Component {
     render() {
         return (
             <View style={[{ flex: 1 }]}>
-                <Header style={{ backgroundColor: '#5499C7' }}>
+                <Header style={{ backgroundColor: '#9370DB' }}>
                     <Left>
                         <Button transparent onPress={() => this.props.navigation.goBack()}>
                             <Feather name="arrow-left" color="white" size={25} />
@@ -139,7 +139,7 @@ Border = (color) => {
 
 const styleCreateEvent = StyleSheet.create({
     btnAddEvent: {
-        backgroundColor: "#5499C7",
+        backgroundColor: "#9370DB",
         marginTop: 20
     },
     txtAddEvent: {

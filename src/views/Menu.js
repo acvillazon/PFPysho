@@ -23,35 +23,35 @@ export default class Menu extends React.Component {
     {
       key: 'chat',
       label: 'Games',
-      barColor: '#45B39D',
+      barColor: '#9370DB',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'message'
     },
     {
       key: 'calendar',
       label: 'Movies & TV',
-      barColor: '#5499C7',
+      barColor: '#9370DB',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'movie'
     },
     {
       key: 'upload',
       label: 'Music',
-      barColor: '#6A1B9A',
+      barColor: '#9370DB',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'music-note'
     },
     {
       key: 'foro',
       label: 'Books',
-      barColor: '#1565C0',
+      barColor: '#9370DB',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'book'
     },
     {
       key: 'phone',
       label: 'Books',
-      barColor: '#1565C0',
+      barColor: '#9370DB',
       pressColor: 'rgba(255, 255, 255, 0.16)',
       icon: 'book'
     }

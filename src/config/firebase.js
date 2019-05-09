@@ -465,7 +465,7 @@ class FirebaseDb {
 
                         if(date[id]==undefined){
                             date[id] = []
-                            dateMarked[id] = {selected: false, marked: true, dotColor: "#5499C7"}
+                            dateMarked[id] = {selected: false, marked: true, dotColor: "#9370DB"}
                         }
                         date[id].push(snapshot.data())
 

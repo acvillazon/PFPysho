@@ -7,7 +7,7 @@ import route from '../config/route'
 const AppStack = createStackNavigator(route,
   {
     headerMode:'none',
-    initialRouteName: 'login',
+    initialRouteName: 'register',
     transitionConfig: () => ({
       transitionSpec:{
         duration: 200,

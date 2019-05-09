@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, StyleSheet, Image, ScrollView } from 'react-native'
+import { Platform, View, StyleSheet, Image, ScrollView, TouchableHighlight } from 'react-native'
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { Notifications, Permissions } from 'expo'
 import { Feather } from 'react-native-vector-icons'
@@ -10,6 +10,8 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import jefe from '../config/jefe.png'
 import registro_as from '../images/bloc.png'
+import { LinearGradient } from 'expo'
+import { AntDesign } from 'react-native-vector-icons'
 
 class Chat extends React.Component {
   constructor(props) {
@@ -28,6 +30,7 @@ class Chat extends React.Component {
     var citaid = this.props.navigation.getParam("id")
     var a = await this.props.navigation.getParam("actual")
     this.setState({ thisChat: a })
+    console.log(a)
     this.setState({ id: citaid })
     firebase.refOnFirestore(citaid, message =>
       this.setState(previousState => ({
@@ -85,7 +88,7 @@ class Chat extends React.Component {
       <Bubble {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: '#66CDAA'
+            backgroundColor: '#31bdff'
           }
         }} />
     )
@@ -109,30 +112,34 @@ class Chat extends React.Component {
   render() {
     if (this.props.navigation.getParam("actual") != undefined) {
       var { partner } = this.props.navigation.getParam("actual")
+
       var nombre_user = partner.usuario.nombres
       var apellidos_user = partner.usuario.apellidos
       var nacimiento_user = new Date()
       nacimiento_user.setTime((partner.usuario.nacimiento))
       var tipo = partner.usuario.tipo
       var ocupacion_user = partner.usuario.tipo == "1" ? "Psicologo" : "Estudiante"
+      var { body } = this.props.navigation.getParam("actual")
+      var tipo_chat = body.tipo
     } else {
       var nombre_user = "Usuario"
     }
 
     return (
       <View style={{ flex: 1 }}>
-        <Header style={{ backgroundColor: '#45B39D' }}>
+        <Header style={{ backgroundColor: '#6f54da' }}>
           <Left>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Feather name="arrow-left" color="white" size={30} />
             </Button>
           </Left>
           <Body>
-            <Title style={{ color: 'white' }}>{nombre_user}</Title>
+            <Text style={[{ color: 'white' }]}>{tipo_chat}</Text>
+            <Text note style={{ color: 'white' }}>{nombre_user}</Text>
           </Body>
           <Right>
             <Button transparent onPress={() => this.showProfile()}>
-              <Feather name="user" color="white" size={30} />
+              <Image source={{ uri: 'https://ui-avatars.com/api/?background=31bdff&color=fff&name=' + nombre_user + '+' + apellidos_user + '&rounded=true&size=35' }} style={{ width: 35, height: 35 }}></Image>
             </Button>
 
             {this.props.credentials.Auth.usuario.tipo == "1"
@@ -158,54 +165,69 @@ class Chat extends React.Component {
         </Header>
 
         <Dialog
-          style={{borderRadius:20}}
+          style={{ borderRadius: 20 }}
           visible={this.state.registerVisible}
           onTouchOutside={() => this.setState({ registerVisible: false })} >
-          <View style={[{ padding: 15 }, { borderColor: '#9E9E9E' }, { borderWidth: 1 }, { borderRadius: 10 }]}>
-            <View style={style.containerImage}>
-              <Image source={registro_as} style={[style.imageStyle]} />
+          <View style={[{ height: 60 }, { backgroundColor: '#9370DB' }, { marginHorizontal: -24 }, { marginTop: -24 }, { marginBottom: 20 }]}>
+            <View style={Styles.categoriesChat}>
+              <View style={{ flex: 9 }}>
+                <Text style={[{ color: 'white' }, { fontWeight: '500' }]}>¿Como te sientes?</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <TouchableHighlight onPress={() => this.setState({ dialogVisible: false })}>
+                  <AntDesign name="minuscircleo" size={23} style={{ color: "white" }} />
+                </TouchableHighlight>
+              </View>
             </View>
-            <ScrollView
+          </View>
+          <ScrollView
               scrollEnabled={true}
             >
             <Textarea rowSpan={7} bordered style={style.TextRegister} placeholder="Registro...." onChangeText={(text) => this.changeText(text)} />
             <Button block onPress={() => this.pressSaveRegister()} style={style.buttonRegister}><Text>Guardar</Text></Button>
             </ScrollView>
-          </View>
         </Dialog>
 
         <Dialog
+          style={{ padding: 0 }}
           visible={this.state.profileVisible}
           onTouchOutside={() => this.setState({ profileVisible: false })} >
-          <View style={[{ padding: 15 }, { borderColor: '#9E9E9E' }, { borderWidth: 1 }, { borderRadius: 10 }]}>
+          <LinearGradient colors={['#723d92', '#6d5ffb']} style={[{ marginHorizontal: -24 }, { marginVertical: -24 }]}>
+            <View style={style.closebtn}>
+              <TouchableHighlight style={[{height:30}]} onPress={() => this.setState({ profileVisible: false })}>
+                <AntDesign name="minuscircleo" size={27} style={{ color: "white" }} />
+              </TouchableHighlight>
+            </View>
             <View style={style.containerImage}>
-              <Image source={jefe} style={[style.imageStyle]} />
+              <Image source={{ uri: 'https://ui-avatars.com/api/?background=31bdff&color=fff&name=' + nombre_user + '+' + apellidos_user + '&rounded=true&size=100' }} style={{ width: 100, height: 100 }}></Image>
             </View>
             <ScrollView
               scrollEnabled={true}
             >
-              <Text style={style.text}>Nombre:</Text>
-              <Label style={style.labelDialog}>{nombre_user}</Label>
-              <Text style={style.text}>Apellidos:</Text>
-              <Label style={style.labelDialog}>{apellidos_user}</Label>
-              <Text style={style.text}>Ocupación:</Text>
-              <Label style={style.labelDialog}>{ocupacion_user}</Label>
-              <Text style={style.text}>Fecha de nacimiento:</Text>
-              <Label style={style.labelDialog}>{nacimiento_user.toDateString()}</Label>
-              {tipo == "1"
-                ? null
-                :
-                <View>
-                  <Text style={style.text}>Semestre:</Text>
-                  <Label style={style.labelDialog}>{partner.usuario.semestre}</Label>
-                  <Text style={style.text}>Codigo Universitario:</Text>
-                  <Label style={style.labelDialog}>{partner.usuario.codigo}</Label>
-                  <Text style={style.text}>Carrera de estudio:</Text>
-                  <Label style={style.labelDialog}>{partner.usuario.carrera}</Label>
-                </View>
-              }
+              <View style={style.ScrollView}>
+                <Text style={style.text}>Nombre:</Text>
+                <Label style={style.labelDialog}>{nombre_user}</Label>
+                <Text style={style.text}>Apellidos:</Text>
+                <Label style={style.labelDialog}>{apellidos_user}</Label>
+                <Text style={style.text}>Ocupación:</Text>
+                <Label style={style.labelDialog}>{ocupacion_user}</Label>
+                <Text style={style.text}>Fecha de nacimiento:</Text>
+                <Label style={style.labelDialog}>{nacimiento_user.toDateString()}</Label>
+                {tipo == "1"
+                  ? null
+                  :
+                  <View style={style.ScrollView}>
+                    <Text style={style.text}>Semestre:</Text>
+                    <Label style={style.labelDialog}>{partner.usuario.semestre}</Label>
+                    <Text style={style.text}>Codigo Universitario:</Text>
+                    <Label style={style.labelDialog}>{partner.usuario.codigo}</Label>
+                    <Text style={style.text}>Carrera de estudio:</Text>
+                    <Label style={style.labelDialog}>{partner.usuario.carrera}</Label>
+                  </View>
+                }
+              </View>
             </ScrollView>
-          </View>
+          </LinearGradient>
         </Dialog>
 
         <GiftedChat
@@ -216,13 +238,46 @@ class Chat extends React.Component {
             { _id: firebase.uid }
           }
         />
-        {Platform.OS === 'android' ? <KeyboardSpacer topSpacing={29} /> : null}
+        {Platform.OS === 'android' ? <KeyboardSpacer topSpacing={10} /> : null}
       </View>
     );
   }
 }
 
+const Styles = StyleSheet.create({
+  categoriesChat: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
+  footerCategoriesChat: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 40
+  },
+  splah: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 20,
+  }
+})
+
 var style = StyleSheet.create({
+  closebtn: {
+    flex: 1,
+    alignItems: 'flex-end',
+    alignContent: 'flex-end',
+    marginVertical: 20,
+    marginRight: 15,
+    marginTop: 15
+  },
+  ScrollView: {
+    alignItems: 'center',
+    flex: 1
+  },
   containerDialog: {
     height: 200,
   },
@@ -235,27 +290,35 @@ var style = StyleSheet.create({
     paddingVertical: 10
   },
   TextRegister: {
-    borderColor: '#66CDAA',
-    borderRadius:2,
+    borderColor: '#9370DB',
+    borderRadius: 2,
     borderWidth: 1,
   },
   buttonRegister: {
     marginTop: 15,
-    backgroundColor:'#66CDAA'
-  },
-  containerImage: {
+    backgroundColor: '#9370DB'
+  }
+  , containerImage: {
     flex: 0,
     justifyContent: 'center',
     alignItems: 'center',
-  }, labelDialog: {
-    marginVertical: 5
-  }, imageStyle: {
+    marginBottom: 20
+  },
+  labelDialog: {
+    marginTop: -3,
+    marginVertical: 5,
+    color: 'white',
+    fontWeight: '500',
+    marginBottom: 25
+  },
+  imageStyle: {
     width: 140,
     height: 140,
     marginTop: -100,
-  }, text: {
-    fontWeight: 'bold',
-    color: '#45B39D'
+  },
+  text: {
+    fontSize: 14,
+    color: 'white'
   }
 })
 
@@ -274,3 +337,15 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps, null)(Chat)
+
+
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+*/

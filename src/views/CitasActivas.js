@@ -91,7 +91,7 @@ class Citas_Activas extends Component {
 
   renderItem = (item) => {
     return (
-      <View style={[{ paddingLeft: 15 }, { paddingVertical: 5 }]}>
+      <View style={[{ paddingVertical: 5 },{alignItems:'center'},{marginBottom:10}]}>
         <TouchableHighlight style={{ paddingVertical: 5 }} underlayColor="rgba(89,165,89,0.3)" onPress={() => this._CreateNewChat(item.item)}>
           <Text numberOfLines={5} style={[{ fontSize: 15 }, { color: '#616161' }]}>{item.item}</Text>
         </TouchableHighlight>
@@ -133,41 +133,45 @@ class Citas_Activas extends Component {
   }
 
   renderItemChat = (item) => {
+    var nombre_user = this.props.chats.chat[item.index].partner.usuario.nombres
+    var apellidos_user = this.props.chats.chat[item.index].partner.usuario.apellidos
+    
     try {
       return (
-          <ListItem avatar>
-            <Left>
-              <Thumbnail source={{ uri: this.props.chats.chat[item.index].partner.usuario.avatar }} />
-            </Left>
-            <Body>
-              <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
-                <View>
-                  <Text style={{color:'#626567'}}>{this.props.chats.chat[item.index].body.tipo}</Text>
-                  <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
-                </View>
-
-              </Button>
-            </Body>
-            <Right>
-              <View style={[{ flex: 1 }, { flexDirection: 'row' }]}>
-                {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
-                  ?
-                  <View style={[{ justifyContent: 'center' }, { marginRight: 5 }]}>
-                    <Badge warning style={[{ justifyContent: 'center' }]}>
-                      <AntDesign name="exclamation" size={15} />
-                    </Badge>
-                  </View>
-                  : null
-                }
-                <Button onPress={() => this._alertBeforeCloseChat(this.props.chats.chat[item.index])}
-                  transparent
-
-                >
-                  <AntDesign name="minuscircle" size={20} style={{ color: "#FF7F50" }} />
-                </Button>
+        <ListItem avatar>
+          <Left>
+            <Thumbnail source={{ uri: 'https://ui-avatars.com/api/?background=31bdff&color=fff&name=' + nombre_user + '+' + apellidos_user + '&rounded=true&size=50' }} style={{ width: 50, height: 50 }} />
+          </Left>
+          <Body>
+            <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>
+              <View>
+                <Text style={{ color: '#626567' }}>{this.props.chats.chat[item.index].body.tipo}</Text>
+                <Text note>{this.props.chats.chat[item.index].partner.usuario.nombres}</Text>
               </View>
-            </Right>
-          </ListItem>
+
+            </Button>
+          </Body>
+          <Right>
+            <View style={[{ flex: 1 }, { flexDirection: 'row' }]}>
+              {this.state.newMessage[this.props.chats.chat[item.index].id] != undefined
+                ?
+                <View style={[{ justifyContent: 'center' }, { marginRight: 10 }]}>
+                  <Badge style={[{ justifyContent: 'center' }, { backgroundColor: '#7A5CD2' }]}>
+                    <AntDesign color="white" name="exclamation" size={15} />
+                  </Badge>
+                </View>
+                : null
+              }
+
+              <Button onPress={() => this._alertBeforeCloseChat(this.props.chats.chat[item.index])}
+                transparent
+
+              >
+                <AntDesign name="minuscircleo" size={25} style={{ color: "#7A5CD2" }} />
+              </Button>
+            </View>
+          </Right>
+        </ListItem>
       )
     } catch{
       return (
@@ -182,9 +186,21 @@ class Citas_Activas extends Component {
 
         <Dialog
           visible={this.state.dialogVisible}
-          title="Como te sientes?"
+          style={{ paddingVertical: -50 }}
           onTouchOutside={() => this.setState({ dialogVisible: false })} >
-          <View style={{ height: 380 }}>
+          <View style={[{ height: 60 }, { backgroundColor: '#9370DB' }, { marginHorizontal: -24 }, { marginTop: -24 },{marginBottom:20}]}>
+            <View style={Styles.categoriesChat}>
+              <View style={{flex:9}}>
+                <Text style={[{color:'white'},{fontWeight:'500'}]}>¿Como te sientes?</Text>
+              </View>
+              <View style={{flex:1}}>
+                <TouchableHighlight onPress={() => this.setState({ dialogVisible: false })}>
+                  <AntDesign name="minuscircleo" size={23} style={{ color: "white" }} />
+                </TouchableHighlight>
+              </View>
+            </View>
+          </View>
+          <View style={[{ height: 380 }]}>
             <FlatList
               data={this.state.categoriesp}
               numberOfLines={5}
@@ -192,7 +208,20 @@ class Citas_Activas extends Component {
               renderItem={this.renderItem}
             />
           </View>
-          <Label style={[{ color: 'grey' }, { fontSize: 14 }]}>Si crees encajar en mas de una categoria, no te preocupes, con una bastara hasta el momento.</Label>
+          <View style={[{ height: 60 }, { backgroundColor: '#9370DB' }, { marginHorizontal: -24 }, { marginBottom: -24 }]}>
+            <View style={Styles.footerCategoriesChat}>
+              <View style={{flex:1}}>
+                <TouchableHighlight onPress={() => this.setState({ dialogVisible: false })}>
+                  <AntDesign name="warning" size={23} style={{ color: "white" }} />
+                </TouchableHighlight>
+              </View>
+              <View style={[{flex:9},{paddingHorizontal:10}]}>
+                <Text style={[{fontSize:10},{color:'white'},{fontWeight:'normal'}]}>Si crees encajar en más de una categoría, no te preocupes, con una bastará hasta el momento</Text>
+              </View>
+            </View>
+          </View>
+          <View >
+          </View>
         </Dialog>
 
         <Dialog
@@ -205,19 +234,19 @@ class Citas_Activas extends Component {
 
         {this.state.chatReady == true ?
           <FlatList
-            style={[{ ƒlex: 1 },{marginHorizontal:5}]}
+            style={[{ ƒlex: 1 }, { marginHorizontal: 5 }]}
             extraData={this.state}
             data={this.state.chats}
             keyExtractor={(item, index) => index.toString()}
             renderItem={this.renderItemChat}
           />
 
-          : 
-            <View style={Styles.splah}>
-              <Image style={[{marginLeft:30}]} source={splah_chat}></Image>
-              <Text style={[{color:'#808388'},{marginTop: 30}]}>No hay chats disponibles</Text>
-            </View>
-          }
+          :
+          <View style={Styles.splah}>
+            <Image style={[{ marginLeft: 30 }]} source={splah_chat}></Image>
+            <Text style={[{ color: '#808388' }, { marginTop: 30 }]}>No hay chats disponibles</Text>
+          </View>
+        }
 
         {this.props.credentials.Auth.usuario.tipo == "1"
           ?
@@ -225,7 +254,7 @@ class Citas_Activas extends Component {
           :
           <ActionButton
             renderIcon={() => <AntDesign name="message1" size={30} style={{ color: "white" }} />}
-            buttonColor="#45B39D"
+            buttonColor="#9370DB"
             onPress={() => this._dialogVisible()} />
         }
       </View>
@@ -234,9 +263,21 @@ class Citas_Activas extends Component {
 }
 
 const Styles = StyleSheet.create({
-  splah:{
-    flex:1,
-    justifyContent:'center',
+  categoriesChat: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
+  footerCategoriesChat: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 40
+  },
+  splah: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 20,
   }

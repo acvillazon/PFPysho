@@ -98,7 +98,7 @@ class AgendaScreen extends Component {
             agendaDayTextColor: '#7B7D7D',
             agendaDayNumColor: '#7B7D7D',
             agendaTodayColor: '#5499C7',
-            agendaKnobColor: '#5499C7'
+            agendaKnobColor: '#9370DB'
           }}
           renderEmptyData={() =><View style={[{flex:1},{justifyContent:"center"},{alignItems:'center'}]}><Text>NO EXISTEN EVENTOS EN ESTA FECHA</Text></View>}
           onRefresh={() => this._isRefreshing()}
@@ -106,13 +106,13 @@ class AgendaScreen extends Component {
         />
 
         <ActionButton
-          buttonColor="#5499C7"
+          buttonColor="#9370DB"
           renderIcon={() => <Ionicons name="md-calendar" size={30} color="#fff"/>}
           onPress={() => this.createEvent()} />
 
         {this.state.loading == true
           ? <View style={styles.indicator}>
-            <ActivityIndicator size="large" color="#7B68EE" />
+            <ActivityIndicator size="large" color="#9370DB" />
           </View>
           : null
         }
@@ -126,7 +126,7 @@ class AgendaScreen extends Component {
           >
             <Text style={{ fontSize: 16 }}>{this.state.descripcion}</Text>
             <View style={{ marginTop: 10 }}>
-              <Button onPress={() => this.setState({ dialogVisible: false })} rounded block danger style={{ padding: 10 }}>
+              <Button onPress={() => this.setState({ dialogVisible: false })} rounded block style={[{ padding: 10 },{backgroundColor:'#9370DB'}]}>
                 <Text style={[{ color: "white" }]}>Cerrar</Text>
               </Button>
             </View>

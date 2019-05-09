@@ -58,11 +58,13 @@ class Citas_Inactivas extends Component {
   }
   
   renderItemChat = (item) => {
+    var nombre_user = this.props.chats.chat[item.index].partner.usuario.nombres
+    var apellidos_user = this.props.chats.chat[item.index].partner.usuario.apellidos
     try {
       return (
         <ListItem avatar>
           <Left>
-            <Thumbnail source={{ uri: this.props.chats.chat[item.index].partner.usuario.avatar }} />
+            <Thumbnail source={{ uri: 'https://ui-avatars.com/api/?background=31bdff&color=fff&name=' + nombre_user + '+' + apellidos_user + '&rounded=true&size=50' }} style={{ width: 50, height: 50 }} />
           </Left>
           <Body>
               <Button transparent onPress={() => this.chatPress(this.props.chats.chat[item.index].id)}>

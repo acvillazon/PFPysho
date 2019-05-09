@@ -80,7 +80,7 @@ class Register extends Component {
     }
 
     render() {
-        var avatar = "https://api.adorable.io/avatars/200/" + this.state.avatar + ".png" 
+        var avatar = "https://ui-avatars.com/api/?background=9370DB&color=fff&name=S+M&rounded=true&size=250" 
         return (
             <View style={[{ flex: 1 }, { paddingHorizontal: 20 }]}>
                 <KeyboardAvoidingView
@@ -96,7 +96,7 @@ class Register extends Component {
                     </View>
 
                     <ScrollView
-
+                        showsVerticalScrollIndicator
                         scrollEnabled={true}
                         style={[{height:(Dimensions.get("screen").height/2)}]}
                     >
@@ -194,7 +194,7 @@ class Register extends Component {
                         : null
                     }
 
-                    <Button primary block onPress={() => this.registerNewUser(avatar)}>
+                    <Button style={{backgroundColor:"#9370DB"}} block onPress={() => this.registerNewUser(avatar)}>
                         <Text> REGISTRAR </Text>
                     </Button>
                     </ScrollView>
