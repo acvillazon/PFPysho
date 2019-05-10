@@ -1,13 +1,18 @@
 import * as React from 'react';
-import { View, Image, StyleSheet, StatusBar, FlatList, TouchableHighlight, Text } from 'react-native';
+import { View, Image, StyleSheet,Text, StatusBar, FlatList, TouchableHighlight, Dimensions } from 'react-native';
 import { ImagePicker } from 'expo';
 import { Button, Icon } from 'native-base';
 import ActionButton from 'react-native-action-button';
 import Prueba from './ZoomImage';
 import firebase from '../config/firebase'
+import { connect } from 'react-redux';
+import { withNavigation } from 'react-navigation';
 
 
-export default class UploadImages extends React.Component {
+const numColumns = 2;
+
+
+class UploadImages extends React.Component {
 
     constructor(props) {
         super(props)
@@ -54,10 +59,12 @@ export default class UploadImages extends React.Component {
 
         var a = await firebase.uploadImage(blob, name)
         if (a){
-            alert("Succes")
+            alert("Imagen cargada")
         }else{
-            alert("fail")
+            alert("Error al cargar la imagen")
         }
+
+        
         
     }
 
@@ -67,10 +74,10 @@ export default class UploadImages extends React.Component {
 
     _renderItem = item => {
         return (
-            <View>
+            <View style={{marginHorizontal:5}}>
                 <TouchableHighlight onPress={() => this._zoomImage(this.state.images[item.index])}>
                     <Image
-                        style={{ width: 500, height: 500 }}
+                        style={{height: Dimensions.get('window').width / numColumns,width: Dimensions.get('window').width / numColumns}}
                         source={{ uri: this.state.images[item.index] }}
                     />
                 </TouchableHighlight>
@@ -86,17 +93,21 @@ export default class UploadImages extends React.Component {
                     data={this.state.images}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={this._renderItem}
+                    ItemSeparatorComponent={() => <View style={{height:5}}><Text></Text></View>}
+                    numColumns={numColumns}
                 />
-                <ActionButton buttonColor="#4527a0">
-                    <ActionButton.Item buttonColor='#8c9eff' title="Pick an image" onPress={this._pickImage}>
+                {this.props.credentials.Auth.usuario.tipo == "1"
+                ?
+                <ActionButton buttonColor="#674fb7">
+                    <ActionButton.Item buttonColor='#31bdff' title="Pick an image" onPress={this._pickImage}>
                         <Icon name="md-create" style={styles.actionButtonIcon} />
                     </ActionButton.Item>
                 </ActionButton>
-
+                : null}
                 {this.state.visible == true
                     ?
                     <View>
-                        <Button rounded buttonColor='#4527a0'
+                        <Button rounded style={{backgroundColor:'#674fb7'}}
                             onPress={() => this.setState({ visible: false })} >
                             <Icon name='close' />  
                         </Button>
@@ -120,7 +131,22 @@ const styles = StyleSheet.create({
         height: 22,
         color: 'white',
     },
+    item: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        margin: 1,
+        height: Dimensions.get('window').width / numColumns, // approximate a square
+        
+    },
 });
 
+const mapStateToProps = state => {
+    return {
+      credentials: state.credentials,
+    }
+}
 
+const docu = withNavigation(UploadImages)
+export default connect(mapStateToProps, null)(docu)
 

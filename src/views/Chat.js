@@ -6,8 +6,8 @@ import { Feather } from 'react-native-vector-icons'
 import { Header, Text, Button, Left, Right, Label, Body, Title, Textarea } from 'native-base';
 import firebase from '../config/firebase'
 import { Dialog } from 'react-native-simple-dialogs'
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import jefe from '../config/jefe.png'
 import registro_as from '../images/bloc.png'
 import { LinearGradient } from 'expo'
@@ -134,8 +134,8 @@ class Chat extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Text style={[{ color: 'white' }]}>{tipo_chat}</Text>
-            <Text note style={{ color: 'white' }}>{nombre_user}</Text>
+            <Text style={[{ color: 'white' },{fontSize:14}]}>{tipo_chat}</Text>
+            <Text note style={[{ color: 'white' },{fontSize:12}]}>{nombre_user}</Text>
           </Body>
           <Right>
             <Button transparent onPress={() => this.showProfile()}>
@@ -171,10 +171,10 @@ class Chat extends React.Component {
           <View style={[{ height: 60 }, { backgroundColor: '#9370DB' }, { marginHorizontal: -24 }, { marginTop: -24 }, { marginBottom: 20 }]}>
             <View style={Styles.categoriesChat}>
               <View style={{ flex: 9 }}>
-                <Text style={[{ color: 'white' }, { fontWeight: '500' }]}>¿Como te sientes?</Text>
+                <Text style={[{ color: 'white' }, { fontWeight: '500' }]}>Registro de asistencia</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <TouchableHighlight onPress={() => this.setState({ dialogVisible: false })}>
+                <TouchableHighlight onPress={() => this.setState({ registerVisible: false })}>
                   <AntDesign name="minuscircleo" size={23} style={{ color: "white" }} />
                 </TouchableHighlight>
               </View>

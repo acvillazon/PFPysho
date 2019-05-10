@@ -1,18 +1,27 @@
 //CAMBIO
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import BottomNavigation, {
   IconTab,
   Badge
 } from 'react-native-material-bottom-navigation'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
-import {MaterialIcons} from 'react-native-vector-icons'
+import {MaterialCommunityIcons, AntDesign,FontAwesome, 
+  Feather } from 'react-native-vector-icons'
 
 import Chat from './TabViewChat'
 import Calendar from './Calendar'
 import Upload from '../components/Upload'
 import Foro from './CategoriasForo'
-import Phone from '../components/EmergencyCall'
+
+
+import call from 'react-native-phone-call'
+
+const args = {
+  number: '3003227737', 
+  prompt: false 
+}
+
 
 export default class Menu extends React.Component {
   state = {
@@ -22,38 +31,38 @@ export default class Menu extends React.Component {
   tabs = [
     {
       key: 'chat',
-      label: 'Games',
-      barColor: '#9370DB',
+      label: 'chat',
+      barColor: '#9370db',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'message'
+      icon: 'wechat'
     },
     {
       key: 'calendar',
-      label: 'Movies & TV',
-      barColor: '#9370DB',
+      label: 'calendar',
+      barColor: '#9370db',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'movie'
+      icon: 'calendar'
     },
     {
       key: 'upload',
-      label: 'Music',
-      barColor: '#9370DB',
+      label: 'upload',
+      barColor: '#9370db',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'music-note'
+      icon: 'file'
     },
     {
       key: 'foro',
-      label: 'Books',
-      barColor: '#9370DB',
+      label: 'foro',
+      barColor: '#9370db',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'book'
+      icon: 'forum'
     },
     {
       key: 'phone',
-      label: 'Books',
-      barColor: '#9370DB',
+      label: 'phone',
+      barColor: '#9370db',
       pressColor: 'rgba(255, 255, 255, 0.16)',
-      icon: 'book'
+      icon: 'phone-call'
     }
   ]
 
@@ -77,7 +86,7 @@ export default class Menu extends React.Component {
         return <Foro />
         break
       case 'phone':
-        return <Phone />
+        call(args).catch(console.error)
         break
       default:
         return <View><Text>NOOOOO</Text></View>
@@ -85,9 +94,35 @@ export default class Menu extends React.Component {
     }
   }
 
-  renderIcon = icon => ({ isActive }) => (
-    <MaterialIcons size={24} color="white" name={icon} />
-  )
+  renderIcon = icon => ({ isActive }) => {
+    
+    if(icon == 'wechat'){
+      return(
+        <AntDesign size={24} color="white" name={icon} />
+      )
+    }
+    if(icon == 'calendar'){
+      return(
+      <AntDesign size={24} color="white" name={icon} />
+      )
+    }
+    if(icon == 'file'){
+      return(
+      <FontAwesome size={24} color="white" name={icon} />
+      )
+    }
+    if(icon == 'forum'){
+      return(
+      <MaterialCommunityIcons size={24} color="white" name={icon} />
+      )
+    }
+    if(icon == 'phone-call'){
+      return(
+      <Feather size={24} color="white" name={icon} />
+      )
+    }
+    
+   }
 
   renderTab = ({ tab, isActive }) => (
     <IconTab
@@ -116,147 +151,3 @@ export default class Menu extends React.Component {
     )
   }
 }
-
-
-
-
-
-
-
-
-
-
-/*
-import React, { Component } from 'react';
-import { View, StyleSheet, Icon,Image, TouchableHighlight } from 'react-native';
-import { Button, Text, Card, CardItem, Body } from 'native-base'
-import BottomNavigation, {
-  FullTab
-} from 'react-native-material-bottom-navigation'
-
-
-
-class Menu extends Component {
-
-
-  state={
-    activeTab:'CHAT'
-  }
-   
-  tabs  = [
-    { key: 'CHAT',  icon: 'movie', barColor: '#B71C1C',
-    pressColor: 'rgba(255, 255, 255, 0.16)' },
-     { key: 'CALENDAR',  icon: 'movie', barColor: '#B71C1C',
-     pressColor: 'rgba(255, 255, 255, 0.16)'}, 
-     { key: 'FORO', icon: 'movie', barColor: '#B71C1C',
-     pressColor: 'rgba(255, 255, 255, 0.16)' }, 
-     { key: 'UPLOAD', icon: 'movie', barColor: '#B71C1C',
-     pressColor: 'rgba(255, 255, 255, 0.16)' },
-      { key: 'PHONE', icon: 'movie', barColor: '#B71C1C',
-      pressColor: 'rgba(255, 255, 255, 0.16)'}
-  ]
-
-  state = {
-    activeTab: this.tabs[0].key
-  }
-
-
-  select = (name) => {
-      if (name == 'CHAT'){
-        this.props.navigation.navigate('tabViewChat')
-      }
-      if (name == 'CALENDAR'){
-        this.props.navigation.navigate('calendar')
-      }
-      if(name == 'FORO'){
-        this.props.navigation.navigate('categoriasforo')
-      }
-      if(name == 'UPLOAD'){
-        this.props.navigation.navigate('upload')
-      }
-      if(name == 'PHONE'){
-        this.props.navigation.navigate('emergencycall')
-      }
-  }
-
-
-  renderItem = ({ item, index }) => {
-    return (
-      <Card style={styles.item} >
-        <CardItem>
-          <Body style={{alignItems:'center'}}>
-              <Image source={item.image}/>
-          </Body>
-        </CardItem>
-        <CardItem>
-          <Body style={{alignItems:'center'}}>
-            <TouchableHighlight block primary onPress={()=>this.select(item.key)}>
-              <Text>{item.key}</Text>
-            </TouchableHighlight>
-          </Body>
-        </CardItem>
-      </Card>
-    )
-  }
-
-  renderIcon = icon => ({ isActive }) => (
-    <Icon size={24} color="white" name={icon} />
-  )
-
-  renderTab = ({ tab, isActive }) => (
-    <FullTab
-      isActive={isActive}
-      key={tab.key}
-      renderIcon={this.renderIcon(tab.icon)}
-    />
-  )
-
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          { Your screen contents depending on current tab. }
-        </View>
-        <BottomNavigation
-          onTabPress={newTab => this.setState({ activeTab: newTab.key })}
-          renderTab={this.renderTab}
-          tabs={this.tabs}
-        />
-      </View>
-    );
-  }
-}
-
-Bordera = (color) => {
-  return {
-    borderColor: color,
-    borderWidth: 2,
-  }
-}
-
-const styles = StyleSheet.create({
-  scene: {
-    flex: 1,
-    
-  },
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: 'white',
-  },
-  item: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    margin:20,
-  },
-  itemText: {
-    color: '#303f9f',
-  },
-});
-
-
-export default Menu;
-
-
-*/

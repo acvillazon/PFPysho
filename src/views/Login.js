@@ -8,9 +8,10 @@ import { connect } from 'react-redux'
 import { addAuth } from '../../accion/User'
 import { Notifications, Permissions, SQLite } from 'expo'
 import { BaseModel, types } from 'expo-sqlite-orm'
-import wallpaper from '../images/wallpaper.png'
 import userimage from '../images/username.png'
 import passwordimage from '../images/password.png'
+import logo from '../images/logo.png'
+import { LinearGradient } from 'expo'
 
 import {
     Text
@@ -46,7 +47,7 @@ class Login extends Component {
         super(props)
         this.state = {
             loading: false,
-            email: 'adriana@gmail.com',
+            email: 'andres@gmail.com',
             password: '123456',
         }
     }
@@ -163,6 +164,8 @@ class Login extends Component {
 
     };
     loginFailed = () => {
+        this.setState({loading:false})
+
         alert('Login failure. Please tried again.');
     };
     // methods to handle user input and update the state
@@ -171,7 +174,9 @@ class Login extends Component {
 
     render() {
         return (
-            <ImageBackground source={wallpaper} style={{ width: '100%', height: '100%' }}>
+            <LinearGradient colors={['#723d92','#6d5ffb']} style={{ height: '100%', width: '100%' }}>
+                <Image source={logo} style={styles.logo} />
+                <Text style={styles.letras}> BIENVENIDO </Text>
                 <View style={styles.container}>
                     <View floatingLabel >
                         <Image source={userimage} style={styles.inlineImg} />
@@ -188,6 +193,7 @@ class Login extends Component {
                         <TextInput
                             style={styles.input}
                             value={this.state.password}
+                            secureTextEntry={true}
                             onChangeText={this.onChangeTextPassword}
                             placeholderTextColor="white"
                             underlineColorAndroid="transparent"
@@ -202,12 +208,12 @@ class Login extends Component {
 
                     {this.state.loading == true
                         ? <View style={styles.indicator}>
-                            <ActivityIndicator style={styles.indicatorA} size="large" color="green" />
+                            <ActivityIndicator style={styles.indicatorA} size="large" color="#723d92" />
                         </View>
                         : null
                     }
                 </View>
-            </ImageBackground>
+            </LinearGradient>
         )
     }
 }
@@ -222,18 +228,30 @@ const styles = StyleSheet.create({
         alignContent: "center",
         justifyContent: "center",
         alignItems: 'center',
-
+    },
+    logo: {
+        width: 140,
+        height: 140,
+        marginTop: 100,
+        marginLeft: DEVICE_WIDTH/2-(130/2),
+        position: 'absolute'
+    },
+    letras:{
+        color: 'white',
+        marginLeft: DEVICE_WIDTH/2-48,
+        marginTop: 250,
+        position: 'absolute'
     },
     button: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#F035E0',
+        backgroundColor: '#614ece',
         height: 40,
-        marginTop: 10,
         width: DEVICE_WIDTH - 40,
         borderRadius: 20,
         zIndex: 100,
-
+        bottom: 50,
+        position: 'absolute',
     },
     text: {
         color: 'white',
@@ -248,14 +266,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     input: {
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        backgroundColor: '#7b78ff',
         width: DEVICE_WIDTH - 40,
         height: 40,
         paddingLeft: 45,
         marginVertical: 15,
         borderRadius: 20,
         color: '#ffffff',
-
     },
     inlineImg: {
         position: 'absolute',

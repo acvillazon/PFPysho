@@ -11,14 +11,14 @@ export default class Upload extends React.Component {
     this.state={
       index: 0,
       routes: [
-      { key: 'first', title: 'Images' },
-      { key: 'second', title: 'Documents' },
+      { key: 'first', title: 'IMÁGENES' },
+      { key: 'second', title: 'ARCHIVOS PDF' },
     ],
 
     }
   }
 
-  _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} tabStyle={styles.tabStyles} indicatorStyle={[{backgroundColor:'#303f9f'}, {height:3}]} style={styles.tabBar}/>;
+  _renderTabBar = props => <TabBar {...props} pressOpacity={0.3} tabStyle={styles.tabStyles} indicatorStyle={[{backgroundColor:'#31bdff'}, {height:3}]} style={styles.tabBar}/>;
 
 
   renderScene = ({ route }) => {
@@ -43,7 +43,6 @@ export default class Upload extends React.Component {
       onIndexChange={index => this.setState({ index })}
       initialLayout={{ width: Dimensions.get('window').width }}
       indicatorStyle={{ backgroundColor: 'white' }}
-      style={{ backgroundColor: 'pink' }}
     />
     )
   };
@@ -52,8 +51,9 @@ export default class Upload extends React.Component {
 
 const styles = StyleSheet.create({
     tabBar:{
-      backgroundColor: '#8c9eff',
+      backgroundColor: '#6f54da',
       fontWeight: 'bold'
     }
 });
+
 

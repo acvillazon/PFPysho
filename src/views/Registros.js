@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Firebase from '../config/firebase'
 import { Platform, View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
-import { Container, Header, Content, Accordion, Left, Button, Right, Body} from "native-base";
+import { Container, Header, Content, Accordion, Left, Button, Right, Body, Text} from "native-base";
 import { Feather } from 'react-native-vector-icons'
 const dataArray = [
     { title: "First Element", content: "Lorem ipsum dolor sit amet" },
@@ -36,9 +36,10 @@ export default class AccordionExample extends Component {
                         <Feather name="arrow-left" color="white" size={30} />
                         </Button>
                     </Left>
-                    <Body/>
+                    <Body>
+                        <Text style={[{color:'white'},{fontSize:13}]}>Historial de registros de asistencias</Text>
+                    </Body>
                     <Right/>
-
                 </Header>
                 <Content padder>
                     <Accordion dataArray={this.state.data}

@@ -7,6 +7,7 @@ import { Ionicons } from 'react-native-vector-icons'
 import { Dialog } from 'react-native-simple-dialogs'
 import { Button } from 'native-base';
 import { withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
 
 
 LocaleConfig.locales['fr'] = {
@@ -36,7 +37,7 @@ class AgendaScreen extends Component {
   async getEventos() {
     this.setState({ loading: true })
     await firebase.getAllEvent((items, itemsMarked) => {
-      this.setState({ items, itemsMarked})
+      this.setState({ items, itemsMarked })
       this.setState({ loading: false })
     })
   }
@@ -45,7 +46,7 @@ class AgendaScreen extends Component {
     this.setState({ screenHeight: Height })
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     firebase.refOffFirestoreCalendar()
   }
 
@@ -97,18 +98,22 @@ class AgendaScreen extends Component {
           theme={{
             agendaDayTextColor: '#7B7D7D',
             agendaDayNumColor: '#7B7D7D',
-            agendaTodayColor: '#5499C7',
+            agendaTodayColor: '#9370DB',
             agendaKnobColor: '#9370DB'
           }}
-          renderEmptyData={() =><View style={[{flex:1},{justifyContent:"center"},{alignItems:'center'}]}><Text>NO EXISTEN EVENTOS EN ESTA FECHA</Text></View>}
+          renderEmptyData={() => <View style={[{ flex: 1 }, { justifyContent: "center" }, { alignItems: 'center' }]}><Text>NO EXISTEN EVENTOS EN ESTA FECHA</Text></View>}
           onRefresh={() => this._isRefreshing()}
           markedDates={this.state.itemsMarked}
         />
+        {this.props.credentials.Auth.usuario.tipo == "1"
+          ?
+          <ActionButton
+            buttonColor="#9370DB"
+            renderIcon={() => <Ionicons name="md-calendar" size={30} color="#fff" />}
+            onPress={() => this.createEvent()} />
+          : null
+        }
 
-        <ActionButton
-          buttonColor="#9370DB"
-          renderIcon={() => <Ionicons name="md-calendar" size={30} color="#fff"/>}
-          onPress={() => this.createEvent()} />
 
         {this.state.loading == true
           ? <View style={styles.indicator}>
@@ -126,7 +131,7 @@ class AgendaScreen extends Component {
           >
             <Text style={{ fontSize: 16 }}>{this.state.descripcion}</Text>
             <View style={{ marginTop: 10 }}>
-              <Button onPress={() => this.setState({ dialogVisible: false })} rounded block style={[{ padding: 10 },{backgroundColor:'#9370DB'}]}>
+              <Button onPress={() => this.setState({ dialogVisible: false })} rounded block style={[{ padding: 10 }, { backgroundColor: '#9370DB' }]}>
                 <Text style={[{ color: "white" }]}>Cerrar</Text>
               </Button>
             </View>
@@ -169,7 +174,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withNavigation(AgendaScreen)
+const mapStateToProps = state => {
+  return {
+    credentials: state.credentials,
+  }
+}
+const Nav = withNavigation(AgendaScreen)
+export default connect(mapStateToProps, null)(Nav)
 /**
  *
  * <Agenda

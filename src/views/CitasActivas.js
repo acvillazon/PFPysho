@@ -12,7 +12,6 @@ import { AntDesign, MaterialIcons } from 'react-native-vector-icons'
 import { withNavigation } from 'react-navigation';
 import splah_chat from '../images/splash_chat3.png'
 
-
 class Citas_Activas extends Component {
   constructor(props) {
     super(props);
@@ -109,6 +108,8 @@ class Citas_Activas extends Component {
     }
   }
   changeChatToInactive = (chat) => {
+    console.log("AQUI")
+    console.log(chat)
     if (firebase.activeToInactive(chat.id)) {
       alert("El chat ha sido cerrado y archivado")
       firebase.disminuirNumChat(chat.body.usuario)
@@ -133,9 +134,14 @@ class Citas_Activas extends Component {
   }
 
   renderItemChat = (item) => {
-    var nombre_user = this.props.chats.chat[item.index].partner.usuario.nombres
-    var apellidos_user = this.props.chats.chat[item.index].partner.usuario.apellidos
-    
+    if(this.props.chats.chat[item.index] != undefined){
+      var nombre_user = this.props.chats.chat[item.index].partner.usuario.nombres
+      var apellidos_user = this.props.chats.chat[item.index].partner.usuario.apellidos
+  
+    }else{
+      var nombre_user = "A"
+      var apellidos_user = "V"
+    }
     try {
       return (
         <ListItem avatar>

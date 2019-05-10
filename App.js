@@ -12,7 +12,10 @@ const store = createStore(combineReducer)
 
 let platform = Platform.OS;
 let platformSpecificStyle = {}
+let platformSpecificStyle2 = undefined
 platformSpecificStyle = platform === 'ios' ? { marginTop: 20 } : { marginTop: 24 }
+platformSpecificStyle2 = platform === 'ios' ?  20  : 24 
+
 
 export default class App extends React.Component {
   constructor(props) {
@@ -38,7 +41,8 @@ export default class App extends React.Component {
         ?
 
           <SafeAreaView style={[{ flex: 1 }]}>
-            <View style={[Border("red"), { flex: 1 }, platformSpecificStyle]}>
+            <View style={[Border("red"), { flex: 1 }]}>
+              <View style={[{height:platformSpecificStyle2},{backgroundColor:'#6f54da'}]}></View>
               <AppContainer />
             </View>
           </SafeAreaView> 
@@ -55,6 +59,6 @@ export default class App extends React.Component {
 Border = (color) => {
   return {
     borderColor: color,
-    borderWidth: 1,
+    borderWidth: 0,
   }
 }
