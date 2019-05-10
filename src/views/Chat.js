@@ -36,7 +36,9 @@ class Chat extends React.Component {
       this.setState(previousState => ({
         messages: GiftedChat.append(previousState.messages, message),
       })), () => {
-        firebase.deleteChat_NewMessage(this.state.thisChat)
+        if(this.props.navigation.getParam("state") != "inactivo"){
+          firebase.deleteChat_NewMessage(this.state.thisChat)
+        }
       });
   }
   componentWillUnmount() {

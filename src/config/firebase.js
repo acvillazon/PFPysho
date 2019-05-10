@@ -335,7 +335,7 @@ class FirebaseDb {
                         }
                     }
                     else if(change.type=="modified" && snapshot.data().state=="inactivo"){
-                        
+                        alert("HH")
                         ids = await ids.filter((value,index)=>{
                             return value != snapshot.id
                         })

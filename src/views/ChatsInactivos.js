@@ -39,9 +39,9 @@ class Citas_Inactivas extends Component {
   }
 
   componentWillUnmount() {
-    if (firebase.LogOutUsuario(firebase.uid)) {
+    /*if (firebase.LogOutUsuario(firebase.uid)) {
       //alert("Se Ha cerrado sesión")
-    }
+    }*/
   }
 
   chatPress = async (id) => {
@@ -51,7 +51,7 @@ class Citas_Inactivas extends Component {
       var snap = this.state.newMessage
       snap[id] = undefined
       this.setState({ newMessage: snap })
-      firebase.deleteChat_NewMessage(result[0])
+      //firebase.deleteChat_NewMessage(result[0])
     } else {
       alert("No se pudo obtener la conversación")
     }

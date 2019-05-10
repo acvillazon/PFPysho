@@ -8,6 +8,8 @@ import BottomNavigation, {
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import {MaterialCommunityIcons, AntDesign,FontAwesome, 
   Feather } from 'react-native-vector-icons'
+import firebase from '../config/firebase'
+
 
 import Chat from './TabViewChat'
 import Calendar from './Calendar'
@@ -68,6 +70,10 @@ export default class Menu extends React.Component {
 
   state = {
     activeTab: this.tabs[0].key
+  }
+
+  componentWillUnmount(){
+    firebase.LogOutUsuario(firebase.uid)
   }
 
 

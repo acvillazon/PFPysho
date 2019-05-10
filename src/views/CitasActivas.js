@@ -49,9 +49,9 @@ class Citas_Activas extends Component {
   }
 
   componentWillUnmount() {
-    if (firebase.LogOutUsuario(firebase.uid)) {
+    /*if (firebase.LogOutUsuario(firebase.uid)) {
       //alert("Se Ha cerrado sesión")
-    }
+    }*/
   }
 
   _CreateNewChat = async (item) => {

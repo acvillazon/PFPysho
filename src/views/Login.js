@@ -47,7 +47,7 @@ class Login extends Component {
         super(props)
         this.state = {
             loading: false,
-            email: 'andres@gmail.com',
+            email: 'usuario1@uninorte.edu.co',
             password: '123456',
         }
     }
@@ -136,7 +136,7 @@ class Login extends Component {
 
     loginSuccess = async () => {
         var user = undefined
-        var ExistinDatabase = true;
+        var ExistinDatabase = false;
         //console.log("Inicio de sesion exitoso")
 
         await firebaseApp.getUser().then((value) => {

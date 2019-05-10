@@ -19,9 +19,9 @@ class Register extends Component {
             selected: undefined,
             nombres: '',
             apellidos: '',
-            codigo: undefined,
-            semestre:undefined,
-            carrera:undefined
+            codigo: '',
+            semestre:'',
+            carrera:''
         }
     }
 
@@ -68,7 +68,6 @@ class Register extends Component {
                 semestre: this.state.semestre,
                 codigo: this.state.codigo,
                 avatar: avatar,
-                messages_new:undefined
             }
             await firebase.RegisterUserForFirstAccess(newUser).then(status => {
                 alert("Usuario Registrado!")
@@ -149,7 +148,7 @@ class Register extends Component {
                                 selectedValue={this.state.selected}
                                 onValueChange={this.setTypeUser}
                             >
-                                <Picker.Item label="Seleccionar..." value="100" />
+                                <Picker.Item label="Seleccionar..." value="1" />
                                 <Picker.Item label="Estudiante" value="0" />
                                 <Picker.Item label="Psicologo" value="1" />
                             </Picker>
